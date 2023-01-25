@@ -7,7 +7,7 @@ export default function Home() {
 	return (
 		<>
 			<Head>
-				<title>Tutor Pro - Tutor like a pro</title>
+				<title>XM Around The World</title>
 			</Head>
 			<NavBar />
 		</>
