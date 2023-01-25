@@ -6,6 +6,7 @@ import { getServerAuthSession } from "../../server/common/get-server-auth-sessio
 import { trpc } from "../../utils/trpc";
 import { useState } from "react";
 import "cal-sans";
+import Link from "next/link";
 
 export default function Dashboard() {
 	const [avatarSelected, setavatarSelected] = useState(false);
@@ -50,8 +51,8 @@ export default function Dashboard() {
 					</div>
 				</div>
 			</nav>
-			<div className="flex justify-center py-24">
-				<h1 className="text-4xl text-[#111111]">
+			<div className="flex justify-center py-24 text-center">
+				<h1 className="max-w-sm text-4xl text-[#111111] sm:max-w-lg">
 					We have collectively moved{" "}
 					<span className="underline">
 						{dataAvailable ? getUsers.data.totalMiles : 0}
@@ -59,10 +60,10 @@ export default function Dashboard() {
 					miles
 				</h1>
 			</div>
-			<div className="flex items-center justify-center gap-4 pb-8">
+			<div className="flex flex-col items-center justify-center gap-4 pb-4 sm:flex-row">
 				<div className="">How many miles did you move?</div>
 				<input
-					className="rounded-md border p-1 focus:outline focus:outline-1 focus:outline-blue-700"
+					className="sm::w-full rounded-md border p-1 focus:outline focus:outline-1 focus:outline-blue-700"
 					type="number"
 					min={0}
 					step={0.01}
@@ -71,7 +72,7 @@ export default function Dashboard() {
 					Submit
 				</button>
 			</div>
-			<div className="flex justify-center">
+			<div className="sm:flex sm:justify-center">
 				{/* <div className="h-6 w-full rounded-full bg-white">
 					<div
 					className="flex h-6 items-center justify-center rounded-full bg-blue-700 p-0.5 text-xs font-medium leading-none text-white"
@@ -80,9 +81,9 @@ export default function Dashboard() {
 					{roundedPercentageOfGoal > 2 ? roundedPercentageOfGoal + "%" : ""}
 					</div>
 				</div> */}
-				<table className="w-[600px] text-[#111111]">
+				<table className="w-full text-[#111111] sm:w-[600px]">
 					<thead>
-						<tr className="border border-[#E2E8F0] text-left">
+						<tr className="border-y border-[#E2E8F0] text-left font-bold sm:border">
 							<th className="px-8 py-4 text-center">#</th>
 							<th className="px-8 py-4">Name</th>
 							<th className="px-8 py-4">Miles</th>
@@ -92,7 +93,10 @@ export default function Dashboard() {
 						{dataAvailable &&
 							getUsers.data.usersToMiles.map((user, index) => {
 								return (
-									<tr key={user.id} className="border border-[#E2E8F0]">
+									<tr
+										key={user.id}
+										className="border-b border-[#E2E8F0] sm:border"
+									>
 										<td className="w-16 px-8 py-4">
 											{index == 0 ? (
 												<FirstPlaceSVG />
@@ -101,16 +105,19 @@ export default function Dashboard() {
 											)}
 										</td>
 										<td>
-											<button className="mx-8 my-4 flex items-center gap-4 hover:text-blue-700">
+											<Link
+												href={`/profile/${user.id}`}
+												className="mx-8 my-4 flex items-center gap-4 hover:text-blue-700"
+											>
 												<Image
 													src={user.image!}
 													alt={"Profile Picture"}
 													width={49}
 													height={49}
-													className="rounded-full"
+													className="hidden rounded-full sm:block"
 												/>
-												<p>{user.name}</p>
-											</button>
+												<p className="text-left">{user.name}</p>
+											</Link>
 										</td>
 										<td className="px-8 py-4">{user.miles}</td>
 									</tr>
