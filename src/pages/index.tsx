@@ -35,7 +35,7 @@ export default function Dashboard() {
 				userName={session?.user?.name?.split(" ")[0] ?? ""}
 			/>
 			<div className="flex justify-center py-10 text-center md:py-24">
-				<h1 className="max-w-sm text-4xl text-[#111111] sm:max-w-lg">
+				<h1 className="max-w-sm text-4xl text-[#111111] sm:max-w-lg md:max-w-4xl">
 					We have collectively moved{" "}
 					<span className="underline">
 						{dataAvailable ? getUsers.data.totalMiles : 0}
@@ -166,7 +166,7 @@ const NavBar = ({
 					}
 				>
 					{isUserSignedIn && (
-						<div className="flex flex-col items-center justify-center gap-6 rounded-md border border-[#E2E8F0] bg-[#FFFFFF] py-4 shadow-md">
+						<div className="flex flex-col items-center justify-center gap-6 rounded-md border border-[#E2E8F0] bg-[#FFFFFF] py-6 shadow-md">
 							<HistoryNavButton />
 							<SignOutButton />
 						</div>
@@ -193,13 +193,13 @@ const SignOutButton = () => {
 
 const HistoryNavButton = () => {
 	return (
-		<button
+		<Link
+			href="/history"
 			className="flex items-center gap-2 px-10 font-medium hover:text-blue-700"
-			onClick={() => {}}
 		>
 			<HistorySVG />
 			{"History"}
-		</button>
+		</Link>
 	);
 };
 
