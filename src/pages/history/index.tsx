@@ -49,8 +49,8 @@ export default function HistoryPage() {
 									</h3>
 								</div>
 								<div className="md:flex md:justify-center">
-									<div className="pt-4 md:rounded-lg md:border md:shadow-md">
-										<div className="flex items-end justify-between border-b border-black pl-7 pr-7 text-xl font-bold">
+									<div className="md:rounded-lg md:border md:shadow-md">
+										<div className="flex items-end justify-between border-b border-black px-7 py-6 text-xl font-bold">
 											<p>{year}</p>
 											<p>{"miles"}</p>
 										</div>
