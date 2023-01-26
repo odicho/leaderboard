@@ -15,7 +15,7 @@ export default function GoogleSignInButton({
 					callbackUrl:
 						callbackUrl ||
 						new URLSearchParams(window.location.search).get("callbackUrl") ||
-						"/dashboard",
+						"/",
 				});
 			}}
 		>
@@ -46,7 +46,7 @@ export default function GoogleSignInButton({
 						<path fill="none" d="M0 0h48v48H0z"></path>
 					</g>
 				</svg>{" "}
-				{"Sign in with Google"}
+				<p className="hidden sm:block">{"Sign in with Google"}</p>
 			</div>
 		</button>
 	);

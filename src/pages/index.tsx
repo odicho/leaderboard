@@ -10,11 +10,6 @@ import Link from "next/link";
 import GoogleSignInButton from "../components/GoogleSignInButton";
 
 export default function Dashboard() {
-	const [avatarSelected, setavatarSelected] = useState(false);
-	const toggleMobileNav = () => {
-		setavatarSelected(!avatarSelected);
-	};
-
 	const { data: session, status } = useSession();
 	const getUsers = trpc.user.getAllUsersAndMiles.useQuery();
 	const setRun = trpc.run.setRun.useMutation();
@@ -35,26 +30,11 @@ export default function Dashboard() {
 
 	return (
 		<>
-			<nav>
-				<div className="border-b">
-					<div className="p-6">
-						<div className="flex items-center justify-between">
-							<h5>
-								{"Welcome back, "}
-								<span className="font-bold">
-									{session?.user?.name?.split(" ")[0]}
-								</span>
-								!<span className="text-2xl">👋</span>
-							</h5>
-							{/* <button className="hover:text-blue-700">
-								<h6>My Runs</h6>
-							</button> */}
-							{isUserSignedIn ? <SignOutButton /> : <GoogleSignInButton />}
-						</div>
-					</div>
-				</div>
-			</nav>
-			<div className="flex justify-center py-24 text-center">
+			<NavBar
+				isUserSignedIn={isUserSignedIn}
+				userName={session?.user?.name?.split(" ")[0] ?? ""}
+			/>
+			<div className="flex justify-center py-10 text-center md:py-24">
 				<h1 className="max-w-sm text-4xl text-[#111111] sm:max-w-lg">
 					We have collectively moved{" "}
 					<span className="underline">
@@ -63,7 +43,7 @@ export default function Dashboard() {
 					miles
 				</h1>
 			</div>
-			<div className="flex flex-col items-center justify-center gap-4 pb-4 sm:flex-row">
+			<div className="flex flex-col items-center justify-center gap-4 py-4 sm:flex-row">
 				<div className="">How many miles did you move?</div>
 				<input
 					className="sm::w-full rounded-md border p-1 focus:outline focus:outline-1 focus:outline-blue-700"
@@ -76,14 +56,6 @@ export default function Dashboard() {
 				</button>
 			</div>
 			<div className="sm:flex sm:justify-center">
-				{/* <div className="h-6 w-full rounded-full bg-white">
-					<div
-					className="flex h-6 items-center justify-center rounded-full bg-blue-700 p-0.5 text-xs font-medium leading-none text-white"
-					style={{ width: `${roundedPercentageOfGoal}%` }}
-					>
-					{roundedPercentageOfGoal > 2 ? roundedPercentageOfGoal + "%" : ""}
-					</div>
-				</div> */}
 				<table className="w-full text-[#111111] sm:w-[600px]">
 					<thead>
 						<tr className="border-y border-[#E2E8F0] text-left font-bold sm:border">
@@ -130,15 +102,85 @@ export default function Dashboard() {
 				</table>
 			</div>
 			<button onClick={handleSetRun}>Add Run</button>
-			<SignOutButton />
 		</>
 	);
 }
 
+const NavBar = ({
+	isUserSignedIn,
+	userName,
+}: {
+	isUserSignedIn: boolean;
+	userName: string;
+}) => {
+	const [mobileNavActive, setMobileNavActive] = useState(false);
+	const toggleMobileNav = () => {
+		setMobileNavActive(!mobileNavActive);
+	};
+
+	return (
+		<nav>
+			<div className="relative border-b">
+				<div className="p-4 md:p-6">
+					{isUserSignedIn ? (
+						<div className="flex items-center justify-between">
+							<h5>
+								<span className="hidden sm:inline-block">
+									{"Welcome back, "}
+								</span>
+								<span className="inline-block sm:hidden">{"Hi, "}</span>
+								<span className="font-bold">{` ${userName}!`}</span>
+								<span className="text-2xl">👋</span>
+							</h5>
+							<div className="hidden md:flex">
+								<HistoryNavButton />
+								<SignOutButton />
+							</div>
+
+							<div className="flex md:hidden">
+								<button
+									className={mobileNavActive ? "hidden" : "hover:text-blue-700"}
+									onClick={() => toggleMobileNav()}
+								>
+									<HamburgerIcon />
+								</button>
+								<button
+									className={mobileNavActive ? "hover:text-blue-700" : "hidden"}
+									onClick={() => toggleMobileNav()}
+								>
+									<CrossIcon />
+								</button>
+							</div>
+						</div>
+					) : (
+						<div className="flex items-center justify-end">
+							<GoogleSignInButton />
+						</div>
+					)}
+				</div>
+				<div
+					className={
+						mobileNavActive
+							? "absolute inset-x-2 z-10 pt-2 md:hidden"
+							: "hidden"
+					}
+				>
+					{isUserSignedIn && (
+						<div className="flex flex-col items-center justify-center gap-6 rounded-md border border-[#E2E8F0] bg-[#FFFFFF] py-4 shadow-md">
+							<HistoryNavButton />
+							<SignOutButton />
+						</div>
+					)}
+				</div>
+			</div>
+		</nav>
+	);
+};
+
 const SignOutButton = () => {
 	return (
 		<button
-			className="flex items-center gap-2 py-4 px-10 font-medium hover:text-blue-700"
+			className="flex items-center gap-2 px-10 font-medium hover:text-blue-700"
 			onClick={() => {
 				signOut({ callbackUrl: "/" });
 			}}
@@ -149,12 +191,44 @@ const SignOutButton = () => {
 	);
 };
 
+const HistoryNavButton = () => {
+	return (
+		<button
+			className="flex items-center gap-2 px-10 font-medium hover:text-blue-700"
+			onClick={() => {}}
+		>
+			<HistorySVG />
+			{"History"}
+		</button>
+	);
+};
+
+const HistorySVG = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		>
+			<path d="M3 3v5h5"></path>
+			<path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
+			<path d="M12 7v5l4 2"></path>
+		</svg>
+	);
+};
+
 const LogOutSVG = () => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width="20"
-			height="20"
+			width="24"
+			height="24"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
@@ -188,6 +262,45 @@ const FirstPlaceSVG = () => {
 			<path d="M8 7h8"></path>
 			<circle cx="12" cy="17" r="5"></circle>
 			<path d="M12 18v-2h-.5"></path>
+		</svg>
+	);
+};
+
+const HamburgerIcon = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		>
+			<line x1="4" y1="12" x2="20" y2="12"></line>
+			<line x1="4" y1="6" x2="20" y2="6"></line>
+			<line x1="4" y1="18" x2="20" y2="18"></line>
+		</svg>
+	);
+};
+
+const CrossIcon = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		>
+			<line x1="18" y1="6" x2="6" y2="18"></line>
+			<line x1="6" y1="6" x2="18" y2="18"></line>
 		</svg>
 	);
 };
