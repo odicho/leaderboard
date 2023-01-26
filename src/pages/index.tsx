@@ -84,6 +84,14 @@ export default function Dashboard() {
 		}
 	};
 
+	const handleSubmitMoveKeyDown = (
+		e: React.KeyboardEvent<HTMLInputElement>
+	) => {
+		if (e.key === "Enter") {
+			handleSubmitMove();
+		}
+	};
+
 	return (
 		<>
 			{!isLoading && (
@@ -110,8 +118,12 @@ export default function Dashboard() {
 						min={0}
 						step={0.01}
 						onChange={(e) => {
-							setMilesInput(parseFloat(e.target.value));
+							setMilesInput(
+								Math.round(parseFloat(e.target.value) * 100 + Number.EPSILON) /
+									100
+							);
 						}}
+						onKeyDown={handleSubmitMoveKeyDown}
 					/>
 					<button
 						className="w-20 hover:font-bold hover:text-blue-700"

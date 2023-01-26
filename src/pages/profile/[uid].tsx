@@ -14,12 +14,7 @@ export default function ProfilePage() {
 		uid = uid[0];
 	}
 
-	const { data: session, status } = useSession({
-		required: true,
-		onUnauthenticated() {
-			router.replace("/");
-		},
-	});
+	const { status } = useSession();
 	const isUserSignedIn = status === "authenticated";
 
 	const profileQuery = trpc.profile.getProfile.useQuery(
@@ -49,7 +44,7 @@ export default function ProfilePage() {
 							<div key={year} className="">
 								<div className="flex justify-center py-10 text-center md:py-20">
 									<h3 className="max-w-sm text-center text-3xl font-bold tracking-wide md:max-w-md md:text-4xl">
-										{session?.user?.name?.split(" ")[0] ?? ""}
+										{profile.name.split(" ")[0] ?? ""}
 										{" has moved"}{" "}
 										<span className="underline">{weeks.totalMilesYear}</span>{" "}
 										miles in {year}
