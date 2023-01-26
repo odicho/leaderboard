@@ -105,7 +105,7 @@ export default function Dashboard() {
 				<div className="flex flex-col items-center justify-center gap-4 py-4 sm:flex-row">
 					<div className="">How many miles did you move?</div>
 					<input
-						className="sm::w-full rounded-md border p-1 focus:outline focus:outline-1 focus:outline-blue-700"
+						className="w-32 rounded-md border p-1 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
 						type="number"
 						min={0}
 						step={0.01}
@@ -130,7 +130,7 @@ export default function Dashboard() {
 				</div>
 			)}
 			<div className="sm:flex sm:justify-center">
-				<table className="w-full text-[#111111] sm:w-[600px]">
+				<table className="w-full text-[#111111] shadow-md md:w-[600px]">
 					<thead>
 						<tr className="border-y border-[#E2E8F0] text-left font-bold sm:border">
 							<th className="px-8 py-4 text-center">#</th>
@@ -175,10 +175,12 @@ export default function Dashboard() {
 					</tbody>
 				</table>
 			</div>
-			<div className="fixed bottom-4 pl-1">{roundedPercentageOfGoal + "%"}</div>
-			<div className="fixed bottom-0 h-4 w-full bg-[#E2E8F0]">
+			<div className="fixed bottom-3 pl-1 text-sm">
+				{roundedPercentageOfGoal + "%"}
+			</div>
+			<div className="fixed bottom-0 h-3 w-full bg-[#E2E8F0] shadow-inner">
 				<div
-					className="flex h-6 items-center justify-center bg-blue-700 p-0.5 text-xs font-medium leading-none text-white"
+					className="flex h-3 items-center justify-center bg-blue-700 p-0.5 text-xs font-medium leading-none text-white"
 					style={{ width: `${roundedPercentageOfGoal}%` }}
 				></div>
 			</div>
@@ -205,7 +207,7 @@ const NavBar = ({
 
 	return (
 		<nav>
-			<div className="relative border-b">
+			<div className="relative border-b shadow-sm">
 				<div className="p-4 md:p-6">
 					{isUserSignedIn ? (
 						<div className="flex items-center justify-between">
@@ -278,7 +280,7 @@ const NavBar = ({
 const SignOutButton = () => {
 	return (
 		<button
-			className="flex items-center gap-2 px-10 font-medium hover:text-blue-700"
+			className="flex items-center gap-2 px-6 font-medium hover:text-blue-700"
 			onClick={() => {
 				signOut({ callbackUrl: "/" });
 			}}
@@ -293,7 +295,7 @@ const HistoryNavButton = () => {
 	return (
 		<Link
 			href="/history"
-			className="flex items-center gap-2 px-10 font-medium hover:text-blue-700"
+			className="flex items-center gap-2 px-6 font-medium hover:text-blue-700"
 		>
 			<HistorySVG />
 			{"History"}
