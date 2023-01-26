@@ -92,7 +92,7 @@ export default function Dashboard() {
 					userName={session?.user?.name?.split(" ")[0] ?? ""}
 				/>
 			)}
-			<div className="flex justify-center py-10 text-center md:py-24">
+			<div className="flex justify-center py-10 text-center md:py-20">
 				<h1 className="max-w-sm text-4xl text-[#111111] sm:max-w-lg md:max-w-4xl">
 					We have collectively moved{" "}
 					<span className="underline">
@@ -102,7 +102,7 @@ export default function Dashboard() {
 				</h1>
 			</div>
 			{!isSubmitted ? (
-				<div className="flex flex-col items-center justify-center gap-4 py-4 sm:flex-row">
+				<div className="flex flex-col items-center justify-center gap-4 py-8 sm:flex-row">
 					<div className="">How many miles did you move?</div>
 					<input
 						className="w-32 rounded-md border p-1 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
@@ -123,14 +123,14 @@ export default function Dashboard() {
 					</button>
 				</div>
 			) : (
-				<div className="flex flex-col items-center justify-center gap-4 py-4 sm:flex-row">
+				<div className="flex flex-col items-center justify-center gap-4 py-8 sm:flex-row">
 					<div>
 						Thanks for your contribution! <span>🎉</span>
 					</div>
 				</div>
 			)}
 			<div className="sm:flex sm:justify-center">
-				<table className="w-full text-[#111111] shadow-md md:w-[600px]">
+				<table className="w-full text-[#111111] md:w-[600px] md:shadow-md">
 					<thead>
 						<tr className="border-y border-[#E2E8F0] text-left font-bold sm:border">
 							<th className="px-8 py-4 text-center">#</th>
