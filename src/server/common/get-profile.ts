@@ -6,29 +6,33 @@ dayjs.extend(weekOfYear);
 
 type RunsByWeek = {
 	[key: number]: {
-		[key: number]: {
-			userId: string;
-			distance: number;
-			date: string;
-		}[];
+		week: {
+			[key: number]: {
+				totalMilesWeek: number;
+			};
+		};
+		totalMilesYear: number;
 	};
 };
 
 const categorizeRunsByWeek = (runs: Run[]) => {
 	const runsByWeek: RunsByWeek = {};
+	let totalMilesYear = 0;
 	runs.forEach((run) => {
-		const { distance, userId, createdAt } = run;
+		const { id, distance, userId, createdAt } = run;
 		const date = dayjs(createdAt);
 		const week = date.week();
 		const year = date.year();
 
 		if (!runsByWeek[year]) {
-			runsByWeek[year] = {};
+			runsByWeek[year] = { week: {}, totalMilesYear: 0 };
 		}
-		if (!runsByWeek[year][week]) {
-			runsByWeek[year][week] = [];
+		if (!runsByWeek[year].week[week]) {
+			runsByWeek[year].week[week] = { totalMilesWeek: 0 };
 		}
-		runsByWeek[year][week].push({ distance, userId, date: date.toISOString() });
+
+		runsByWeek[year].week[week].totalMilesWeek += distance;
+		runsByWeek[year].totalMilesYear += distance;
 	});
 
 	return runsByWeek;
@@ -55,7 +59,7 @@ export const getProfile = async (userId: string) => {
 	});
 
 	if (!user || !user.name || !user.image) {
-		throw new Error("User not found");
+		return null;
 	}
 
 	const runsByWeek =

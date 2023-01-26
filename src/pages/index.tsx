@@ -1,5 +1,5 @@
 import { GetServerSideProps } from "next";
-import { signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { EARTH_CIRCUMFERENCE } from "../constants/constants";
 import { getServerAuthSession } from "../server/common/get-server-auth-session";
@@ -12,15 +12,53 @@ import GoogleSignInButton from "../components/GoogleSignInButton";
 export default function Dashboard() {
 	const { data: session, status } = useSession();
 	const getUsers = trpc.user.getAllUsersAndMiles.useQuery();
-	const setRun = trpc.run.setRun.useMutation();
+	const utils = trpc.useContext();
+	const [isSubmitted, setIsSubmitted] = useState(false);
+	const setRun = trpc.run.setRun.useMutation({
+		onMutate: async (newRun) => {
+			setIsSubmitted(true);
+			setTimeout(() => {
+				setIsSubmitted(false);
+			}, 3000);
+			await utils.user.getAllUsersAndMiles.cancel();
+			const previousUsers = getUsers.data;
 
-	const handleSetRun = async () => {
-		setRun.mutate({
-			userId: session!.user!.id,
-		});
-	};
+			utils.user.getAllUsersAndMiles.setData(undefined, (prev) => {
+				if (!prev) {
+					return {
+						totalMiles: newRun.distance,
+						usersToMiles: [
+							{
+								id: newRun.userId,
+								image: session?.user!.image!,
+								name: session?.user!.name!,
+								miles: newRun.distance,
+							},
+						],
+					};
+				}
+				prev.totalMiles += newRun.distance;
+				prev.usersToMiles.forEach((user) => {
+					if (user.id === newRun.userId) {
+						user.miles += newRun.distance;
+					}
+				});
+				return prev;
+			});
+
+			return { previousUsers };
+		},
+		onError: (err, newRun, context) => {
+			utils.user.getAllUsersAndMiles.setData(undefined, context!.previousUsers);
+			setIsSubmitted(false);
+		},
+		onSettled: () => {
+			utils.user.getAllUsersAndMiles.invalidate();
+		},
+	});
 
 	const isUserSignedIn = status === "authenticated";
+	const isLoading = status === "loading";
 	const dataAvailable = !getUsers.isLoading && getUsers.data;
 	const percentageOfGoal = dataAvailable
 		? (getUsers.data.totalMiles / EARTH_CIRCUMFERENCE) * 100
@@ -28,12 +66,32 @@ export default function Dashboard() {
 	const roundedPercentageOfGoal =
 		Math.round(percentageOfGoal * 100 + Number.EPSILON) / 100;
 
+	const [milesInput, setMilesInput] = useState(0);
+
+	const handleSubmitMove = async () => {
+		if (!isUserSignedIn) {
+			await signIn("google", {
+				callbackUrl: `/`,
+			});
+		} else {
+			if (milesInput <= 0) {
+				return;
+			}
+			setRun.mutate({
+				userId: session!.user!.id,
+				distance: milesInput,
+			});
+		}
+	};
+
 	return (
 		<>
-			<NavBar
-				isUserSignedIn={isUserSignedIn}
-				userName={session?.user?.name?.split(" ")[0] ?? ""}
-			/>
+			{!isLoading && (
+				<NavBar
+					isUserSignedIn={isUserSignedIn}
+					userName={session?.user?.name?.split(" ")[0] ?? ""}
+				/>
+			)}
 			<div className="flex justify-center py-10 text-center md:py-24">
 				<h1 className="max-w-sm text-4xl text-[#111111] sm:max-w-lg md:max-w-4xl">
 					We have collectively moved{" "}
@@ -43,18 +101,34 @@ export default function Dashboard() {
 					miles
 				</h1>
 			</div>
-			<div className="flex flex-col items-center justify-center gap-4 py-4 sm:flex-row">
-				<div className="">How many miles did you move?</div>
-				<input
-					className="sm::w-full rounded-md border p-1 focus:outline focus:outline-1 focus:outline-blue-700"
-					type="number"
-					min={0}
-					step={0.01}
-				/>
-				<button className="w-20 hover:font-bold hover:text-blue-700">
-					Submit
-				</button>
-			</div>
+			{!isSubmitted ? (
+				<div className="flex flex-col items-center justify-center gap-4 py-4 sm:flex-row">
+					<div className="">How many miles did you move?</div>
+					<input
+						className="sm::w-full rounded-md border p-1 focus:outline focus:outline-1 focus:outline-blue-700"
+						type="number"
+						min={0}
+						step={0.01}
+						onChange={(e) => {
+							setMilesInput(parseFloat(e.target.value));
+						}}
+					/>
+					<button
+						className="w-20 hover:font-bold hover:text-blue-700"
+						onClick={() => {
+							handleSubmitMove();
+						}}
+					>
+						Submit
+					</button>
+				</div>
+			) : (
+				<div className="flex flex-col items-center justify-center gap-4 py-4 sm:flex-row">
+					<div>
+						Thanks for your contribution! <span>🎉</span>
+					</div>
+				</div>
+			)}
 			<div className="sm:flex sm:justify-center">
 				<table className="w-full text-[#111111] sm:w-[600px]">
 					<thead>
@@ -101,7 +175,13 @@ export default function Dashboard() {
 					</tbody>
 				</table>
 			</div>
-			<button onClick={handleSetRun}>Add Run</button>
+			<div className="fixed bottom-4 pl-1">{roundedPercentageOfGoal + "%"}</div>
+			<div className="fixed bottom-0 h-4 w-full bg-[#E2E8F0]">
+				<div
+					className="flex h-6 items-center justify-center bg-blue-700 p-0.5 text-xs font-medium leading-none text-white"
+					style={{ width: `${roundedPercentageOfGoal}%` }}
+				></div>
+			</div>
 		</>
 	);
 }
@@ -118,20 +198,38 @@ const NavBar = ({
 		setMobileNavActive(!mobileNavActive);
 	};
 
+	const [isWelcomeMessageClicked, setIsWelcomeMessageClicked] = useState(false);
+	const toggleWelcomeMessage = () => {
+		setIsWelcomeMessageClicked(!isWelcomeMessageClicked);
+	};
+
 	return (
 		<nav>
 			<div className="relative border-b">
 				<div className="p-4 md:p-6">
 					{isUserSignedIn ? (
 						<div className="flex items-center justify-between">
-							<h5>
-								<span className="hidden sm:inline-block">
-									{"Welcome back, "}
-								</span>
-								<span className="inline-block sm:hidden">{"Hi, "}</span>
-								<span className="font-bold">{` ${userName}!`}</span>
-								<span className="text-2xl">👋</span>
-							</h5>
+							<button
+								onClick={() => {
+									toggleWelcomeMessage();
+								}}
+							>
+								<h5
+									className={`${
+										isWelcomeMessageClicked ? "hidden" : "hover:text-blue-700"
+									}`}
+								>
+									<span className="hidden sm:inline-block">
+										{"Welcome back, "}
+									</span>
+									<span className="inline-block sm:hidden">{"Hi, "}</span>
+									<span className="font-bold">{` ${userName}!`}</span>
+									<span className="text-2xl">👋</span>
+								</h5>
+								<h5 className={`${isWelcomeMessageClicked ? "" : "hidden"}`}>
+									<span className="text-2xl">🏃</span>
+								</h5>
+							</button>
 							<div className="hidden md:flex">
 								<HistoryNavButton />
 								<SignOutButton />
@@ -275,9 +373,9 @@ const HamburgerIcon = () => {
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
-			stroke-width="2"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		>
 			<line x1="4" y1="12" x2="20" y2="12"></line>
 			<line x1="4" y1="6" x2="20" y2="6"></line>
@@ -295,9 +393,9 @@ const CrossIcon = () => {
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
-			stroke-width="2"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		>
 			<line x1="18" y1="6" x2="6" y2="18"></line>
 			<line x1="6" y1="6" x2="18" y2="18"></line>

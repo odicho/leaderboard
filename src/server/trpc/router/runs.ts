@@ -24,15 +24,14 @@ export const runRouter = router({
 			return runs;
 		}),
 	setRun: publicProcedure
-		.input(z.object({ userId: z.string() }))
-		.mutation(async ({ input: { userId } }) => {
-			const runs = await prisma.run.create({
+		.input(z.object({ userId: z.string(), distance: z.number() }))
+		.mutation(async ({ input: { userId, distance } }) => {
+			const { distance: distancePosted } = await prisma.run.create({
 				data: {
-					distance: 10.34,
-					time: 155,
-					pace: 15.5,
+					distance: distance,
 					user: { connect: { id: userId } },
 				},
 			});
+			return distancePosted;
 		}),
 });

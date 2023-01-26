@@ -54,8 +54,6 @@ model User {
 model Run {
   id        String   @id @default(cuid())
   distance  Float
-  time      Float
-  pace      Float
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   createdAt DateTime @default(now())

@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -7,8 +6,14 @@ import GoogleSignInButton from "../../components/GoogleSignInButton";
 import { trpc } from "../../utils/trpc";
 import "cal-sans";
 
-export default function HistoryPage() {
+export default function ProfilePage() {
 	const router = useRouter();
+	let { uid } = router.query;
+
+	if (Array.isArray(uid)) {
+		uid = uid[0];
+	}
+
 	const { data: session, status } = useSession({
 		required: true,
 		onUnauthenticated() {
@@ -16,14 +21,18 @@ export default function HistoryPage() {
 		},
 	});
 	const isUserSignedIn = status === "authenticated";
-	const userId = session?.user?.id!;
 
 	const profileQuery = trpc.profile.getProfile.useQuery(
 		{
-			userId: userId,
+			userId: uid!,
 		},
 		{
-			enabled: !!userId,
+			enabled: !!uid,
+			onSuccess: (data) => {
+				if (!data) {
+					router.replace("/");
+				}
+			},
 		}
 	);
 
@@ -31,19 +40,17 @@ export default function HistoryPage() {
 
 	return (
 		<>
-			<NavBar
-				isUserSignedIn={isUserSignedIn}
-				userName={session?.user?.name?.split(" ")[0] ?? ""}
-			/>
+			<NavBar isUserSignedIn={isUserSignedIn} />
 			<div>
 				{profile &&
 					profile.runsByWeek &&
 					Object.entries(profile.runsByWeek).map(([year, weeks]) => {
 						return (
 							<div key={year} className="">
-								<div className="flex justify-center py-10 text-center md:py-24">
-									<h3 className="text-center font-bold tracking-wide sm:text-3xl">
-										{"You have moved"}{" "}
+								<div className="flex justify-center py-10 text-center md:py-20">
+									<h3 className="max-w-sm text-center text-3xl font-bold tracking-wide md:max-w-md md:text-4xl">
+										{session?.user?.name?.split(" ")[0] ?? ""}
+										{" has moved"}{" "}
 										<span className="underline">{weeks.totalMilesYear}</span>{" "}
 										miles in {year}
 									</h3>
@@ -80,13 +87,7 @@ export default function HistoryPage() {
 	);
 }
 
-const NavBar = ({
-	isUserSignedIn,
-	userName,
-}: {
-	isUserSignedIn: boolean;
-	userName: string;
-}) => {
+const NavBar = ({ isUserSignedIn }: { isUserSignedIn: boolean }) => {
 	const [mobileNavActive, setMobileNavActive] = useState(false);
 	const toggleMobileNav = () => {
 		setMobileNavActive(!mobileNavActive);
