@@ -187,8 +187,8 @@ export default function Dashboard() {
 				</div>
 			)}
 			<div className="pt-10 sm:flex sm:justify-center">
-				<div className="border sm:inline-block sm:rounded-lg md:shadow-md">
-					<table className="w-full select-none text-[#111111] md:w-[600px]">
+				<div className="border sm:inline-block sm:rounded-lg sm:shadow-md">
+					<table className="w-full select-none text-[#111111] sm:w-[600px]">
 						<thead>
 							<tr className="text-left font-bold">
 								<th className="px-8 py-4 text-center">#</th>

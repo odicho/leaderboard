@@ -199,8 +199,8 @@ export default function HistoryPage() {
 									</h3>
 								</div>
 								<div className="sm:flex sm:justify-center">
-									<div className="sm:inline-block sm:rounded-lg sm:border md:shadow-md">
-										<table className="w-full select-none">
+									<div className="sm:inline-block sm:rounded-lg sm:border sm:shadow-md">
+										<table className="w-full select-none sm:w-[600px]">
 											<thead>
 												<tr className="flex border-b border-black py-6 pl-7 pr-20 text-xl font-bold">
 													<th>{year}</th>
