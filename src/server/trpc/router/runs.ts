@@ -44,4 +44,14 @@ export const runRouter = router({
 			});
 			return distancePosted;
 		}),
+	deleteRun: publicProcedure
+		.input(z.object({ id: z.string(), distance: z.number() }))
+		.mutation(async ({ input: { id } }) => {
+			const run = await prisma.run.delete({
+				where: {
+					id: id,
+				},
+			});
+			return run;
+		}),
 });
