@@ -97,7 +97,7 @@ export default function ProfilePage() {
 																			handleYearClick(Number(year));
 																		}}
 																	>
-																		<div className="py-4 pl-6 pr-32">
+																		<div className="py-4 pl-6">
 																			<p className="w-28 text-start">
 																				Week {week}
 																			</p>
@@ -108,7 +108,7 @@ export default function ProfilePage() {
 																					{totalMilesWeek} mi
 																				</p>
 																			</div>
-																			<div className="px-10">
+																			<div className="px-4 sm:px-10">
 																				<div className="flex justify-center">
 																					{selectedWeek === Number(week) ? (
 																						<ArrowDownIcon />
@@ -142,7 +142,7 @@ export default function ProfilePage() {
 																							<div className="flex items-center">
 																								<p>{run.distance} mi</p>
 																							</div>
-																							<div className="w-[104px]">
+																							<div className="w-[56px]">
 																								<p></p>
 																							</div>
 																						</div>

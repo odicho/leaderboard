@@ -177,238 +177,225 @@ export default function HistoryPage() {
 		deleteRun.mutate({ id, distance });
 	};
 
-	console.log(profile);
 	return (
 		<>
 			<NavBar
 				isUserSignedIn={isUserSignedIn}
 				userName={session?.user?.name?.split(" ")[0] ?? ""}
 			/>
-			<div>
-				{profile &&
-					profile.runsByWeek &&
-					Object.entries(profile.runsByWeek)
-						.reverse()
-						.map(([year, weeks]) => {
-							return (
-								<div key={year} className="">
-									<div className="flex justify-center py-10 text-center md:py-24">
-										<h3 className="text-center font-bold tracking-wide sm:text-3xl">
-											{"You have moved"}{" "}
-											<span className="underline">{weeks.totalMilesYear}</span>{" "}
-											miles in {year}
-										</h3>
-									</div>
-									<div className="sm:flex sm:justify-center">
-										<div className="sm:inline-block sm:rounded-lg sm:border md:shadow-md">
-											<table className="w-full select-none">
-												<thead>
-													<tr className="flex border-b border-black py-6 pl-7 pr-20 text-xl font-bold">
-														<th>{year}</th>
-													</tr>
-												</thead>
 
-												<tbody>
-													{Object.entries(weeks.week)
-														.reverse()
-														.map(([week, weekObject]) => {
-															const totalMilesWeek =
-																Math.round(
-																	weekObject.totalMilesWeek * 100 +
-																		Number.EPSILON
-																) / 100;
-															return (
-																<tr key={week} className={`flex flex-col`}>
-																	<td
-																		className={`${
-																			selectedWeek === Number(week) &&
-																			"border-b font-semibold"
-																		} flex cursor-pointer items-center justify-between text-xl hover:bg-[#f8f8f8]`}
-																		onClick={() => {
-																			handleWeekClick(Number(week));
-																			handleYearClick(Number(year));
-																		}}
-																	>
-																		<div className="py-4 pl-6 pr-32">
-																			<p className="w-28 text-start">
-																				Week {week}
+			{profile &&
+				profile.runsByWeek &&
+				Object.entries(profile.runsByWeek)
+					.reverse()
+					.map(([year, weeks]) => {
+						return (
+							<div key={year} className="">
+								<div className="flex justify-center py-10 text-center md:py-24">
+									<h3 className="text-center font-bold tracking-wide sm:text-3xl">
+										{"You have moved"}{" "}
+										<span className="underline">{weeks.totalMilesYear}</span>{" "}
+										miles in {year}
+									</h3>
+								</div>
+								<div className="sm:flex sm:justify-center">
+									<div className="sm:inline-block sm:rounded-lg sm:border md:shadow-md">
+										<table className="w-full select-none">
+											<thead>
+												<tr className="flex border-b border-black py-6 pl-7 pr-20 text-xl font-bold">
+													<th>{year}</th>
+												</tr>
+											</thead>
+
+											<tbody>
+												{Object.entries(weeks.week)
+													.reverse()
+													.map(([week, weekObject]) => {
+														const totalMilesWeek =
+															Math.round(
+																weekObject.totalMilesWeek * 100 + Number.EPSILON
+															) / 100;
+														return (
+															<tr key={week} className={`flex flex-col`}>
+																<td
+																	className={`${
+																		selectedWeek === Number(week) &&
+																		"border-b font-semibold"
+																	} flex cursor-pointer items-center justify-between text-xl hover:bg-[#f8f8f8]`}
+																	onClick={() => {
+																		handleWeekClick(Number(week));
+																		handleYearClick(Number(year));
+																	}}
+																>
+																	<div className="py-4 pl-6">
+																		<p className="w-28 text-start">
+																			Week {week}
+																		</p>
+																	</div>
+																	<div className="flex">
+																		<div>
+																			<p className="w-32 text-end">
+																				{totalMilesWeek} mi
 																			</p>
 																		</div>
-																		<div className="flex">
-																			<div>
-																				<p className="w-32 text-end">
-																					{totalMilesWeek} mi
-																				</p>
-																			</div>
-																			<div className="px-10">
-																				<div className="flex justify-center">
-																					{selectedWeek === Number(week) ? (
-																						<ArrowDownIcon />
-																					) : (
-																						<ArrowUpIcon />
-																					)}
-																				</div>
+
+																		<div className="px-4 sm:px-10">
+																			<div className="flex justify-center">
+																				{selectedWeek === Number(week) ? (
+																					<ArrowDownIcon />
+																				) : (
+																					<ArrowUpIcon />
+																				)}
 																			</div>
 																		</div>
-																	</td>
+																	</div>
+																</td>
 
-																	{selectedWeek === Number(week) && (
-																		<td className="flex flex-col border-b">
-																			{weekObject.runs.map((run, index) => {
-																				return (
-																					<div
-																						key={index}
-																						className="flex justify-between border-b py-4 hover:bg-[#f8f8f8]"
-																					>
-																						<div className="flex flex-col pl-6 text-lg">
-																							<p className="w-28 font-medium">
-																								{run.activity}
-																							</p>
-																							<p className="w-28 text-sm">
-																								{dayjs(run.date).format(
-																									"MM/DD"
-																								)}
-																							</p>
-																						</div>
-																						<div className="flex items-center">
-																							<p>{run.distance} mi</p>
-																							{/* <div className="flex pl-4"> */}
-																							{/* <div className="px-2">
-																									<button>
-																										<EditIcon />
-																									</button>
-																								</div> */}
-																							<div className="px-10">
-																								<button
-																									onClick={() =>
-																										handleDeleteRun(
-																											run.id,
-																											run.distance
-																										)
-																									}
-																								>
-																									<TrashCanIcon />
-																								</button>
-																							</div>
-																							{/* </div> */}
+																{selectedWeek === Number(week) && (
+																	<td className="flex flex-col border-b">
+																		{weekObject.runs.map((run, index) => {
+																			return (
+																				<div
+																					key={index}
+																					className="flex justify-between border-b py-4 hover:bg-[#f8f8f8]"
+																				>
+																					<div className="flex flex-col pl-6 text-lg">
+																						<p className="w-28 font-medium">
+																							{run.activity}
+																						</p>
+																						<p className="w-28 text-sm">
+																							{dayjs(run.date).format("MM/DD")}
+																						</p>
+																					</div>
+																					<div className="flex items-center">
+																						<p>{run.distance} mi</p>
+																						<div className="px-4 sm:px-10">
+																							<button
+																								onClick={() =>
+																									handleDeleteRun(
+																										run.id,
+																										run.distance
+																									)
+																								}
+																							>
+																								<TrashCanIcon />
+																							</button>
 																						</div>
 																					</div>
-																				);
-																			})}
-																			<div
+																				</div>
+																			);
+																		})}
+																		<div
+																			className={`${
+																				createNew &&
+																				createNewWeek === Number(week)
+																					? "justify-between"
+																					: "justify-center"
+																			} flex py-4`}
+																		>
+																			<button
 																				className={`${
 																					createNew &&
 																					createNewWeek === Number(week)
-																						? "justify-between"
-																						: "justify-center"
-																				} flex py-4`}
+																						? "hidden"
+																						: ""
+																				}`}
+																				onClick={() => {
+																					handleCreateNew(
+																						Number(week),
+																						Number(year)
+																					);
+																				}}
 																			>
-																				<button
-																					className={`${
-																						createNew &&
-																						createNewWeek === Number(week)
-																							? "hidden"
-																							: ""
-																					}`}
-																					onClick={() => {
-																						handleCreateNew(
-																							Number(week),
-																							Number(year)
-																						);
-																					}}
-																				>
-																					<PlusIcon />
-																				</button>
-																				{createNew &&
-																					createNewWeek === Number(week) && (
-																						<>
-																							<div className="flex flex-col gap-4 px-6 text-lg">
-																								<input
-																									type="text"
-																									placeholder="Activity"
-																									value={activityInput}
-																									className="w-44 rounded-md border p-1 px-4 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
-																									maxLength={30}
-																									onChange={(e) => {
-																										setActivityInput(
-																											e.target.value
-																										);
-																									}}
-																								/>
-																								<select
-																									value={selectedDate?.format(
-																										"YYYY-MM-DD"
-																									)}
-																									onChange={(e) =>
-																										setSelectedDate(
-																											dayjs(e.target.value)
-																										)
-																									}
-																									className=" block w-full appearance-none rounded border px-4 py-2 pr-8 leading-tight shadow hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700"
-																								>
-																									{dateOptions.map((option) => (
-																										<option
-																											key={option.format(
-																												"YYYY-MM-DD"
-																											)}
-																											value={option.format(
-																												"YYYY-MM-DD"
-																											)}
-																										>
-																											{option.format(
-																												"YYYY-MM-DD"
-																											)}
-																										</option>
-																									))}
-																								</select>
-																							</div>
-																							<div className="flex items-center">
-																								<input
-																									className="w-20 rounded-md border py-1 px-4 text-end shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
-																									type="number"
-																									placeholder={"0"}
-																									min={0}
-																									step={0.01}
-																									value={milesInput || ""}
-																									onChange={(e) => {
-																										setMilesInput(
-																											Math.round(
-																												parseFloat(
-																													e.target.value
-																												) *
-																													100 +
-																													Number.EPSILON
-																											) / 100
-																										);
-																									}}
-																								/>
-																								<div className="flex px-10">
-																									<button
-																										onClick={() =>
-																											handleSubmit()
-																										}
-																										className="focus:outline focus:outline-1 focus:outline-blue-700"
+																				<PlusIcon />
+																			</button>
+																			{createNew &&
+																				createNewWeek === Number(week) && (
+																					<>
+																						<div className="flex flex-col gap-4 px-6 text-lg">
+																							<input
+																								type="text"
+																								placeholder="Activity"
+																								value={activityInput}
+																								className="w-44 rounded-md border p-1 px-4 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
+																								maxLength={30}
+																								onChange={(e) => {
+																									setActivityInput(
+																										e.target.value
+																									);
+																								}}
+																							/>
+																							<select
+																								value={selectedDate?.format(
+																									"YYYY-MM-DD"
+																								)}
+																								onChange={(e) =>
+																									setSelectedDate(
+																										dayjs(e.target.value)
+																									)
+																								}
+																								className=" block w-full appearance-none rounded border px-4 py-2 pr-8 leading-tight shadow hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700"
+																							>
+																								{dateOptions.map((option) => (
+																									<option
+																										key={option.format(
+																											"YYYY-MM-DD"
+																										)}
+																										value={option.format(
+																											"YYYY-MM-DD"
+																										)}
 																									>
-																										<CheckMarkIcon />
-																									</button>
-																								</div>
+																										{option.format(
+																											"YYYY-MM-DD"
+																										)}
+																									</option>
+																								))}
+																							</select>
+																						</div>
+																						<div className="flex items-center">
+																							<input
+																								className="w-20 rounded-md border py-1 px-4 text-end shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
+																								type="number"
+																								placeholder={"0"}
+																								min={0}
+																								step={0.01}
+																								value={milesInput || ""}
+																								onChange={(e) => {
+																									setMilesInput(
+																										Math.round(
+																											parseFloat(
+																												e.target.value
+																											) *
+																												100 +
+																												Number.EPSILON
+																										) / 100
+																									);
+																								}}
+																							/>
+																							<div className="flex px-10">
+																								<button
+																									onClick={() => handleSubmit()}
+																									className="focus:outline focus:outline-1 focus:outline-blue-700"
+																								>
+																									<CheckMarkIcon />
+																								</button>
 																							</div>
-																						</>
-																					)}
-																			</div>
-																		</td>
-																	)}
-																</tr>
-															);
-														})}
-												</tbody>
-											</table>
-										</div>
+																						</div>
+																					</>
+																				)}
+																		</div>
+																	</td>
+																)}
+															</tr>
+														);
+													})}
+											</tbody>
+										</table>
 									</div>
 								</div>
-							);
-						})}
-			</div>
+							</div>
+						);
+					})}
 		</>
 	);
 }

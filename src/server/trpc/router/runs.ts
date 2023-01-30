@@ -8,7 +8,6 @@ export const runRouter = router({
 		.input(z.object({ userId: z.string() }))
 		.query(async ({ input: { userId } }) => {
 			const users = await prisma.user.findMany({});
-			console.log(JSON.stringify(users));
 		}),
 	getRuns: publicProcedure
 		.input(
