@@ -4,11 +4,20 @@ import dayjs from "dayjs";
 import weekOfYear from "dayjs/plugin/weekOfYear";
 dayjs.extend(weekOfYear);
 
-type RunsByWeek = {
+type Runs = {
+	id: string;
+	userId: string;
+	distance: number;
+	activity: string;
+	date: string;
+}[];
+
+export type RunsByWeek = {
 	[key: number]: {
 		week: {
 			[key: number]: {
 				totalMilesWeek: number;
+				runs: Runs;
 			};
 		};
 		totalMilesYear: number;
@@ -18,19 +27,35 @@ type RunsByWeek = {
 const categorizeRunsByWeek = (runs: Run[]) => {
 	const runsByWeek: RunsByWeek = {};
 	let totalMilesYear = 0;
+
+	const currentDate = dayjs();
+	const currentWeekOfYear = currentDate.week();
+	const currentYear = currentDate.year();
+
+	runs.sort((a, b) => {
+		return dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1;
+	});
+
+	for (let i = 2023; i <= currentYear; i++) {
+		runsByWeek[i] = { week: {}, totalMilesYear: 0 };
+		for (let j = 1; j <= currentWeekOfYear; j++) {
+			runsByWeek[i].week[j] = { totalMilesWeek: 0, runs: [] };
+		}
+	}
+
 	runs.forEach((run) => {
-		const { id, distance, userId, createdAt } = run;
-		const date = dayjs(createdAt);
-		const week = date.week();
-		const year = date.year();
+		const { id, userId, distance, createdAt, date, activity } = run;
+		const currentDate = dayjs(createdAt);
+		const week = currentDate.week();
+		const year = currentDate.year();
 
-		if (!runsByWeek[year]) {
-			runsByWeek[year] = { week: {}, totalMilesYear: 0 };
-		}
-		if (!runsByWeek[year].week[week]) {
-			runsByWeek[year].week[week] = { totalMilesWeek: 0 };
-		}
-
+		runsByWeek[year].week[week].runs.push({
+			id,
+			userId,
+			distance,
+			date: date.toISOString(),
+			activity,
+		});
 		runsByWeek[year].week[week].totalMilesWeek += distance;
 		runsByWeek[year].totalMilesYear += distance;
 	});
@@ -62,8 +87,7 @@ export const getProfile = async (userId: string) => {
 		return null;
 	}
 
-	const runsByWeek =
-		user.runs.length > 0 ? categorizeRunsByWeek(user.runs) : {};
+	const runsByWeek = categorizeRunsByWeek(user.runs);
 	const { id, name, image } = user;
 
 	const profile: Profile = { id, name, image, runsByWeek };

@@ -57,7 +57,8 @@ model Run {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  date      DateTime
+  activity  String
 
   @@index([userId])
 }

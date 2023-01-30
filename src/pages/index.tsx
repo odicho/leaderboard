@@ -68,27 +68,27 @@ export default function Dashboard() {
 
 	const [milesInput, setMilesInput] = useState(0);
 
-	const handleSubmitMove = async () => {
-		if (!isUserSignedIn) {
-			await signIn("google", {
-				callbackUrl: `/`,
-			});
-		} else {
-			if (milesInput <= 0) {
-				return;
-			}
-			setRun.mutate({
-				userId: session!.user!.id,
-				distance: milesInput,
-			});
-		}
-	};
+	// const handleSubmitMove = async () => {
+	// 	if (!isUserSignedIn) {
+	// 		await signIn("google", {
+	// 			callbackUrl: `/`,
+	// 		});
+	// 	} else {
+	// 		if (milesInput <= 0) {
+	// 			return;
+	// 		}
+	// 		setRun.mutate({
+	// 			userId: session!.user!.id,
+	// 			distance: milesInput,
+	// 		});
+	// 	}
+	// };
 
 	const handleSubmitMoveKeyDown = (
 		e: React.KeyboardEvent<HTMLInputElement>
 	) => {
 		if (e.key === "Enter") {
-			handleSubmitMove();
+			// handleSubmitMove();
 		}
 	};
 
@@ -128,7 +128,7 @@ export default function Dashboard() {
 					<button
 						className="w-20 hover:font-bold hover:text-blue-700"
 						onClick={() => {
-							handleSubmitMove();
+							// handleSubmitMove();
 						}}
 					>
 						Submit

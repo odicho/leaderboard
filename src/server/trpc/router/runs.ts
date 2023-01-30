@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { prisma } from "../../../server/db/client";
 import { router, publicProcedure } from "../trpc";
+import dayjs from "dayjs";
 
 export const runRouter = router({
 	getAllUsersRuns: publicProcedure
@@ -24,12 +25,21 @@ export const runRouter = router({
 			return runs;
 		}),
 	setRun: publicProcedure
-		.input(z.object({ userId: z.string(), distance: z.number() }))
-		.mutation(async ({ input: { userId, distance } }) => {
+		.input(
+			z.object({
+				userId: z.string(),
+				distance: z.number(),
+				activity: z.string(),
+				date: z.string(),
+			})
+		)
+		.mutation(async ({ input: { userId, distance, activity, date } }) => {
 			const { distance: distancePosted } = await prisma.run.create({
 				data: {
 					distance: distance,
 					user: { connect: { id: userId } },
+					activity,
+					date,
 				},
 			});
 			return distancePosted;
