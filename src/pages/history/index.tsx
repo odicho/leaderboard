@@ -316,18 +316,43 @@ export default function HistoryPage() {
 																				createNewWeek === Number(week) && (
 																					<>
 																						<div className="flex flex-col gap-4 px-6 text-lg">
-																							<input
-																								type="text"
-																								placeholder="Activity"
-																								value={activityInput}
-																								className="w-44 rounded-md border p-1 px-4 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
-																								maxLength={30}
-																								onChange={(e) => {
-																									setActivityInput(
-																										e.target.value
-																									);
-																								}}
-																							/>
+																							<div className="flex flex-col gap-4 sm:flex-row">
+																								{" "}
+																								<input
+																									type="text"
+																									placeholder="Activity"
+																									value={activityInput}
+																									className="w-40 rounded-md border p-1 px-4 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700 sm:w-44"
+																									maxLength={30}
+																									onChange={(e) => {
+																										setActivityInput(
+																											e.target.value
+																										);
+																									}}
+																								/>
+																								<div className="flex items-baseline gap-2">
+																									<input
+																										className="w-32 rounded-md border py-1 px-4 text-end shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
+																										type="number"
+																										placeholder={"0"}
+																										min={0}
+																										step={0.01}
+																										value={milesInput || ""}
+																										onChange={(e) => {
+																											setMilesInput(
+																												Math.round(
+																													parseFloat(
+																														e.target.value
+																													) *
+																														100 +
+																														Number.EPSILON
+																												) / 100
+																											);
+																										}}
+																									/>
+																									<span>mi</span>
+																								</div>
+																							</div>
 																							<select
 																								value={selectedDate?.format(
 																									"YYYY-MM-DD"
@@ -337,7 +362,7 @@ export default function HistoryPage() {
 																										dayjs(e.target.value)
 																									)
 																								}
-																								className=" block w-full appearance-none rounded border px-4 py-2 pr-8 leading-tight shadow hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700"
+																								className=" block w-40 appearance-none rounded border px-4 py-2 pr-8 leading-tight shadow hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700"
 																							>
 																								{dateOptions.map((option) => (
 																									<option
@@ -356,25 +381,6 @@ export default function HistoryPage() {
 																							</select>
 																						</div>
 																						<div className="flex items-center">
-																							<input
-																								className="w-20 rounded-md border py-1 px-4 text-end shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
-																								type="number"
-																								placeholder={"0"}
-																								min={0}
-																								step={0.01}
-																								value={milesInput || ""}
-																								onChange={(e) => {
-																									setMilesInput(
-																										Math.round(
-																											parseFloat(
-																												e.target.value
-																											) *
-																												100 +
-																												Number.EPSILON
-																										) / 100
-																									);
-																								}}
-																							/>
 																							<div className="flex px-10">
 																								<button
 																									onClick={() => handleSubmit()}
