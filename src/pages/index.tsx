@@ -66,8 +66,18 @@ export default function Dashboard() {
 	const percentageOfGoal = dataAvailable
 		? (getUsers.data.totalMiles / EARTH_CIRCUMFERENCE) * 100
 		: 0;
+
+	const percentageOfGoalQuarter = dataAvailable
+		? (getUsers.data.totalMiles / (EARTH_CIRCUMFERENCE / 4)) * 100
+		: 0;
+
 	const roundedPercentageOfGoal =
 		Math.round(percentageOfGoal * 100 + Number.EPSILON) / 100;
+
+	const roundedPercentageOfGoalQuarter =
+		Math.round(percentageOfGoalQuarter * 100 + Number.EPSILON) / 100;
+
+	console.log("roundedPercentageOfQuarter", roundedPercentageOfGoalQuarter);
 
 	const [milesInput, setMilesInput] = useState<number | null>(null);
 	const [activityInput, setActivityInput] = useState("");
@@ -105,7 +115,7 @@ export default function Dashboard() {
 					userName={session?.user?.name?.split(" ")[0] ?? ""}
 				/>
 			)}
-			<div className="flex justify-center py-10 text-center md:py-20">
+			<div className="flex flex-col items-center justify-center py-10 text-center md:py-20">
 				<h1 className="max-w-sm text-4xl text-[#111111] sm:max-w-lg md:max-w-4xl">
 					We have collectively moved{" "}
 					<span className="underline">
@@ -113,6 +123,15 @@ export default function Dashboard() {
 					</span>{" "}
 					miles
 				</h1>
+				<h5 className="max-w-sm text-[#111111] sm:max-w-lg md:max-w-4xl">
+					<span className="font-bold">{roundedPercentageOfGoal}%</span> of the
+					way around the earth
+				</h5>
+				<h5 className="max-w-sm text-[#111111] sm:max-w-lg md:max-w-4xl">
+					And{" "}
+					<span className="font-bold">{roundedPercentageOfGoalQuarter}%</span>{" "}
+					of our goal for this quarter
+				</h5>
 			</div>
 			{!isSubmitted ? (
 				<div className="flex items-center justify-center">
@@ -169,7 +188,7 @@ export default function Dashboard() {
 			)}
 			<div className="pt-10 sm:flex sm:justify-center">
 				<div className="border sm:inline-block sm:rounded-lg md:shadow-md">
-					<table className="w-full text-[#111111] md:w-[600px]">
+					<table className="w-full select-none text-[#111111] md:w-[600px]">
 						<thead>
 							<tr className="text-left font-bold">
 								<th className="px-8 py-4 text-center">#</th>

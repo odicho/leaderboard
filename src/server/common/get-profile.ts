@@ -45,7 +45,7 @@ const categorizeRunsByWeek = (runs: Run[]) => {
 
 	runs.forEach((run) => {
 		const { id, userId, distance, createdAt, date, activity } = run;
-		const currentDate = dayjs(createdAt);
+		const currentDate = dayjs(date);
 		const week = currentDate.week();
 		const year = currentDate.year();
 

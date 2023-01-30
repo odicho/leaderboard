@@ -177,6 +177,7 @@ export default function HistoryPage() {
 		deleteRun.mutate({ id, distance });
 	};
 
+	console.log(profile);
 	return (
 		<>
 			<NavBar
@@ -198,9 +199,9 @@ export default function HistoryPage() {
 											miles in {year}
 										</h3>
 									</div>
-									<div className="flex justify-center">
-										<div className="inline-block rounded-lg border md:shadow-md">
-											<table className="select-none">
+									<div className="sm:flex sm:justify-center">
+										<div className="sm:inline-block sm:rounded-lg sm:border md:shadow-md">
+											<table className="w-full select-none">
 												<thead>
 													<tr className="flex border-b border-black py-6 pl-7 pr-20 text-xl font-bold">
 														<th>{year}</th>
@@ -221,8 +222,8 @@ export default function HistoryPage() {
 																	<td
 																		className={`${
 																			selectedWeek === Number(week) &&
-																			"font-semibold"
-																		} flex cursor-pointer items-center text-xl hover:bg-[#f8f8f8]`}
+																			"border-b font-semibold"
+																		} flex cursor-pointer items-center justify-between text-xl hover:bg-[#f8f8f8]`}
 																		onClick={() => {
 																			handleWeekClick(Number(week));
 																			handleYearClick(Number(year));
@@ -233,18 +234,20 @@ export default function HistoryPage() {
 																				Week {week}
 																			</p>
 																		</div>
-																		<div>
-																			<p className="w-32 text-end">
-																				{totalMilesWeek} mi
-																			</p>
-																		</div>
-																		<div className="px-10">
-																			<div className="flex justify-center">
-																				{selectedWeek === Number(week) ? (
-																					<ArrowDownIcon />
-																				) : (
-																					<ArrowUpIcon />
-																				)}
+																		<div className="flex">
+																			<div>
+																				<p className="w-32 text-end">
+																					{totalMilesWeek} mi
+																				</p>
+																			</div>
+																			<div className="px-10">
+																				<div className="flex justify-center">
+																					{selectedWeek === Number(week) ? (
+																						<ArrowDownIcon />
+																					) : (
+																						<ArrowUpIcon />
+																					)}
+																				</div>
 																			</div>
 																		</div>
 																	</td>
@@ -255,7 +258,7 @@ export default function HistoryPage() {
 																				return (
 																					<div
 																						key={index}
-																						className="flex justify-between border-y py-4 hover:bg-[#f8f8f8]"
+																						className="flex justify-between border-b py-4 hover:bg-[#f8f8f8]"
 																					>
 																						<div className="flex flex-col pl-6 text-lg">
 																							<p className="w-28 font-medium">

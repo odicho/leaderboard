@@ -62,14 +62,14 @@ export default function ProfilePage() {
 								<div key={year} className="">
 									<div className="flex justify-center py-10 text-center md:py-24">
 										<h3 className="text-center font-bold tracking-wide sm:text-3xl">
-											{"You have moved"}{" "}
+											{profile.name.split(" ")[0]} has moved{" "}
 											<span className="underline">{weeks.totalMilesYear}</span>{" "}
 											miles in {year}
 										</h3>
 									</div>
-									<div className="flex justify-center">
-										<div className="inline-block rounded-lg border md:shadow-md">
-											<table className="select-none">
+									<div className="sm:flex sm:justify-center">
+										<div className="sm:inline-block sm:rounded-lg sm:border md:shadow-md">
+											<table className="w-full select-none">
 												<thead>
 													<tr className="flex border-b border-black py-6 pl-7 pr-20 text-xl font-bold">
 														<th>{year}</th>
@@ -91,7 +91,7 @@ export default function ProfilePage() {
 																		className={`${
 																			selectedWeek === Number(week) &&
 																			"font-semibold"
-																		} flex cursor-pointer items-center text-xl hover:bg-[#f8f8f8]`}
+																		} flex cursor-pointer items-center justify-between text-xl hover:bg-[#f8f8f8]`}
 																		onClick={() => {
 																			handleWeekClick(Number(week));
 																			handleYearClick(Number(year));
@@ -102,18 +102,20 @@ export default function ProfilePage() {
 																				Week {week}
 																			</p>
 																		</div>
-																		<div>
-																			<p className="w-32 text-end">
-																				{totalMilesWeek} mi
-																			</p>
-																		</div>
-																		<div className="px-10">
-																			<div className="flex justify-center">
-																				{selectedWeek === Number(week) ? (
-																					<ArrowDownIcon />
-																				) : (
-																					<ArrowUpIcon />
-																				)}
+																		<div className="flex">
+																			<div>
+																				<p className="w-32 text-end">
+																					{totalMilesWeek} mi
+																				</p>
+																			</div>
+																			<div className="px-10">
+																				<div className="flex justify-center">
+																					{selectedWeek === Number(week) ? (
+																						<ArrowDownIcon />
+																					) : (
+																						<ArrowUpIcon />
+																					)}
+																				</div>
 																			</div>
 																		</div>
 																	</td>
