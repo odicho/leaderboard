@@ -69,7 +69,7 @@ export default function ProfilePage() {
 									</div>
 									<div className="flex justify-center">
 										<div className="inline-block rounded-lg border md:shadow-md">
-											<table>
+											<table className="select-none">
 												<thead>
 													<tr className="flex border-b border-black py-6 pl-7 pr-20 text-xl font-bold">
 														<th>{year}</th>
@@ -86,10 +86,7 @@ export default function ProfilePage() {
 																		Number.EPSILON
 																) / 100;
 															return (
-																<tr
-																	key={week}
-																	className={`flex flex-col border-b`}
-																>
+																<tr key={week} className={`flex flex-col`}>
 																	<td
 																		className={`${
 																			selectedWeek === Number(week) &&
@@ -122,7 +119,7 @@ export default function ProfilePage() {
 																	</td>
 
 																	{selectedWeek === Number(week) && (
-																		<td className="flex flex-col">
+																		<td className="flex flex-col border-b">
 																			{weekObject.runs.map((run, index) => {
 																				return (
 																					<div

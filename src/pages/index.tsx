@@ -8,6 +8,7 @@ import { useState } from "react";
 import "cal-sans";
 import Link from "next/link";
 import GoogleSignInButton from "../components/GoogleSignInButton";
+import dayjs from "dayjs";
 
 export default function Dashboard() {
 	const { data: session, status } = useSession();
@@ -54,6 +55,8 @@ export default function Dashboard() {
 		},
 		onSettled: () => {
 			utils.user.getAllUsersAndMiles.invalidate();
+			setMilesInput(null);
+			setActivityInput("");
 		},
 	});
 
@@ -66,23 +69,25 @@ export default function Dashboard() {
 	const roundedPercentageOfGoal =
 		Math.round(percentageOfGoal * 100 + Number.EPSILON) / 100;
 
-	const [milesInput, setMilesInput] = useState(0);
-
-	// const handleSubmitMove = async () => {
-	// 	if (!isUserSignedIn) {
-	// 		await signIn("google", {
-	// 			callbackUrl: `/`,
-	// 		});
-	// 	} else {
-	// 		if (milesInput <= 0) {
-	// 			return;
-	// 		}
-	// 		setRun.mutate({
-	// 			userId: session!.user!.id,
-	// 			distance: milesInput,
-	// 		});
-	// 	}
-	// };
+	const [milesInput, setMilesInput] = useState<number | null>(null);
+	const [activityInput, setActivityInput] = useState("");
+	const handleSubmitMove = async () => {
+		if (!isUserSignedIn) {
+			await signIn("google", {
+				callbackUrl: `/`,
+			});
+		} else {
+			if (milesInput === null || milesInput <= 0 || activityInput === "") {
+				return;
+			}
+			setRun.mutate({
+				userId: session!.user!.id,
+				distance: milesInput,
+				activity: activityInput,
+				date: dayjs().toISOString(),
+			});
+		}
+	};
 
 	const handleSubmitMoveKeyDown = (
 		e: React.KeyboardEvent<HTMLInputElement>
@@ -110,29 +115,50 @@ export default function Dashboard() {
 				</h1>
 			</div>
 			{!isSubmitted ? (
-				<div className="flex flex-col items-center justify-center gap-4 py-8 sm:flex-row">
-					<div className="">How many miles did you move?</div>
-					<input
-						className="w-32 rounded-md border p-1 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
-						type="number"
-						min={0}
-						step={0.01}
-						onChange={(e) => {
-							setMilesInput(
-								Math.round(parseFloat(e.target.value) * 100 + Number.EPSILON) /
-									100
-							);
-						}}
-						onKeyDown={handleSubmitMoveKeyDown}
-					/>
-					<button
-						className="w-20 hover:font-bold hover:text-blue-700"
-						onClick={() => {
-							// handleSubmitMove();
-						}}
-					>
-						Submit
-					</button>
+				<div className="flex items-center justify-center">
+					<div className="flex w-[600px] flex-col items-center">
+						<div className="py-2">
+							How many miles did you move today, and how?
+						</div>
+						<div className="flex w-[350px] items-baseline justify-between py-2">
+							<input
+								className="w-24 rounded-md border p-1 px-4 text-end shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
+								type="number"
+								min={0}
+								step={0.01}
+								placeholder="0"
+								value={milesInput ?? ""}
+								onChange={(e) => {
+									setMilesInput(
+										Math.round(
+											parseFloat(e.target.value) * 100 + Number.EPSILON
+										) / 100
+									);
+								}}
+								onKeyDown={handleSubmitMoveKeyDown}
+							/>
+							<span className="ml-2">miles, </span>
+
+							<input
+								type="text"
+								placeholder="Activity"
+								value={activityInput}
+								className="w-44 rounded-md border p-1 px-4 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
+								maxLength={30}
+								onChange={(e) => {
+									setActivityInput(e.target.value);
+								}}
+							/>
+						</div>
+						<button
+							className="w-20 py-2 hover:font-bold hover:text-blue-700"
+							onClick={() => {
+								handleSubmitMove();
+							}}
+						>
+							Submit
+						</button>
+					</div>
 				</div>
 			) : (
 				<div className="flex flex-col items-center justify-center gap-4 py-8 sm:flex-row">
@@ -141,51 +167,50 @@ export default function Dashboard() {
 					</div>
 				</div>
 			)}
-			<div className="sm:flex sm:justify-center">
-				<table className="w-full text-[#111111] md:w-[600px] md:shadow-md">
-					<thead>
-						<tr className="border-y border-[#E2E8F0] text-left font-bold sm:border">
-							<th className="px-8 py-4 text-center">#</th>
-							<th className="px-8 py-4">Name</th>
-							<th className="px-8 py-4">Miles</th>
-						</tr>
-					</thead>
-					<tbody>
-						{dataAvailable &&
-							getUsers.data.usersToMiles.map((user, index) => {
-								return (
-									<tr
-										key={user.id}
-										className="border-b border-[#E2E8F0] sm:border"
-									>
-										<td className="w-16 px-8 py-4">
-											{index == 0 ? (
-												<FirstPlaceSVG />
-											) : (
-												<p className="text-center">{index + 1}</p>
-											)}
-										</td>
-										<td>
-											<Link
-												href={`/profile/${user.id}`}
-												className="mx-8 my-4 flex items-center gap-4 hover:text-blue-700"
-											>
-												<Image
-													src={user.image!}
-													alt={"Profile Picture"}
-													width={49}
-													height={49}
-													className="hidden rounded-full sm:block"
-												/>
-												<p className="text-left">{user.name}</p>
-											</Link>
-										</td>
-										<td className="px-8 py-4">{user.miles}</td>
-									</tr>
-								);
-							})}
-					</tbody>
-				</table>
+			<div className="pt-10 sm:flex sm:justify-center">
+				<div className="border sm:inline-block sm:rounded-lg md:shadow-md">
+					<table className="w-full text-[#111111] md:w-[600px]">
+						<thead>
+							<tr className="text-left font-bold">
+								<th className="px-8 py-4 text-center">#</th>
+								<th className="px-8 py-4">Name</th>
+								<th className="px-8 py-4">Miles</th>
+							</tr>
+						</thead>
+						<tbody>
+							{dataAvailable &&
+								getUsers.data.usersToMiles.map((user, index) => {
+									return (
+										<tr key={user.id} className="">
+											<td className="w-16 px-8 py-4">
+												{index == 0 ? (
+													<FirstPlaceSVG />
+												) : (
+													<p className="text-center">{index + 1}</p>
+												)}
+											</td>
+											<td>
+												<Link
+													href={`/profile/${user.id}`}
+													className="mx-8 my-4 flex items-center gap-4 hover:text-blue-700"
+												>
+													<Image
+														src={user.image!}
+														alt={"Profile Picture"}
+														width={49}
+														height={49}
+														className="hidden rounded-full sm:block"
+													/>
+													<p className="text-left">{user.name}</p>
+												</Link>
+											</td>
+											<td className="px-8 py-4">{user.miles}</td>
+										</tr>
+									);
+								})}
+						</tbody>
+					</table>
+				</div>
 			</div>
 			<div className="fixed bottom-3 pl-1 text-sm">
 				{roundedPercentageOfGoal + "%"}

@@ -200,7 +200,7 @@ export default function HistoryPage() {
 									</div>
 									<div className="flex justify-center">
 										<div className="inline-block rounded-lg border md:shadow-md">
-											<table>
+											<table className="select-none">
 												<thead>
 													<tr className="flex border-b border-black py-6 pl-7 pr-20 text-xl font-bold">
 														<th>{year}</th>
@@ -217,10 +217,7 @@ export default function HistoryPage() {
 																		Number.EPSILON
 																) / 100;
 															return (
-																<tr
-																	key={week}
-																	className={`flex flex-col border-b`}
-																>
+																<tr key={week} className={`flex flex-col`}>
 																	<td
 																		className={`${
 																			selectedWeek === Number(week) &&
@@ -253,12 +250,12 @@ export default function HistoryPage() {
 																	</td>
 
 																	{selectedWeek === Number(week) && (
-																		<td className="flex flex-col">
+																		<td className="flex flex-col border-b">
 																			{weekObject.runs.map((run, index) => {
 																				return (
 																					<div
 																						key={index}
-																						className="flex justify-between py-4 hover:bg-[#f8f8f8]"
+																						className="flex justify-between border-y py-4 hover:bg-[#f8f8f8]"
 																					>
 																						<div className="flex flex-col pl-6 text-lg">
 																							<p className="w-28 font-medium">
