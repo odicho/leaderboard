@@ -5,6 +5,7 @@ import { useState } from "react";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 import { trpc } from "../../utils/trpc";
 import "cal-sans";
+import dayjs from "dayjs";
 
 export default function ProfilePage() {
 	const router = useRouter();
@@ -33,50 +34,134 @@ export default function ProfilePage() {
 
 	const profile = profileQuery.data;
 
+	const [selectedWeek, setSelectedWeek] = useState(0);
+	const [selectedYear, setSelectedYear] = useState(0);
+
+	const handleWeekClick = (week: number) => {
+		if (week === selectedWeek) {
+			setSelectedWeek(0);
+			return;
+		}
+		setSelectedWeek(week);
+	};
+
+	const handleYearClick = (year: number) => {
+		setSelectedYear(year);
+	};
+
 	return (
 		<>
 			<NavBar isUserSignedIn={isUserSignedIn} />
 			<div>
 				{profile &&
 					profile.runsByWeek &&
-					Object.entries(profile.runsByWeek).map(([year, weeks]) => {
-						return (
-							<div key={year} className="">
-								<div className="flex justify-center py-10 text-center md:py-20">
-									<h3 className="max-w-sm text-center text-3xl font-bold tracking-wide md:max-w-md md:text-4xl">
-										{profile.name.split(" ")[0] ?? ""}
-										{" has moved"}{" "}
-										<span className="underline">{weeks.totalMilesYear}</span>{" "}
-										miles in {year}
-									</h3>
-								</div>
-								<div className="md:flex md:justify-center">
-									<div className="md:rounded-lg md:border md:shadow-md">
-										<div className="flex items-end justify-between border-b border-black py-6 px-7 text-xl font-bold">
-											<p>{year}</p>
-											<p>{"miles"}</p>
-										</div>
+					Object.entries(profile.runsByWeek)
+						.reverse()
+						.map(([year, weeks]) => {
+							return (
+								<div key={year} className="">
+									<div className="flex justify-center py-10 text-center md:py-24">
+										<h3 className="text-center font-bold tracking-wide sm:text-3xl">
+											{"You have moved"}{" "}
+											<span className="underline">{weeks.totalMilesYear}</span>{" "}
+											miles in {year}
+										</h3>
+									</div>
+									<div className="flex justify-center">
+										<div className="inline-block rounded-lg border md:shadow-md">
+											<table>
+												<thead>
+													<tr className="flex border-b border-black py-6 pl-7 pr-20 text-xl font-bold">
+														<th>{year}</th>
+													</tr>
+												</thead>
 
-										{Object.entries(weeks.week).map(([week, weekObject]) => {
-											const totalMilesWeek =
-												Math.round(
-													weekObject.totalMilesWeek * 100 + Number.EPSILON
-												) / 100;
-											return (
-												<div key={week} className="border-b">
-													<div className="flex justify-between gap-2 px-7 py-2 text-xl hover:bg-[#f8f8f8] md:py-6">
-														<p>Week {week}</p>
-														<div className="md:w-80"></div>
-														<p>{totalMilesWeek}</p>
-													</div>
-												</div>
-											);
-										})}
+												<tbody>
+													{Object.entries(weeks.week)
+														.reverse()
+														.map(([week, weekObject]) => {
+															const totalMilesWeek =
+																Math.round(
+																	weekObject.totalMilesWeek * 100 +
+																		Number.EPSILON
+																) / 100;
+															return (
+																<tr
+																	key={week}
+																	className={`flex flex-col border-b`}
+																>
+																	<td
+																		className={`${
+																			selectedWeek === Number(week) &&
+																			"font-semibold"
+																		} flex cursor-pointer items-center text-xl hover:bg-[#f8f8f8]`}
+																		onClick={() => {
+																			handleWeekClick(Number(week));
+																			handleYearClick(Number(year));
+																		}}
+																	>
+																		<div className="py-4 pl-6 pr-32">
+																			<p className="w-28 text-start">
+																				Week {week}
+																			</p>
+																		</div>
+																		<div>
+																			<p className="w-32 text-end">
+																				{totalMilesWeek} mi
+																			</p>
+																		</div>
+																		<div className="px-10">
+																			<div className="flex justify-center">
+																				{selectedWeek === Number(week) ? (
+																					<ArrowDownIcon />
+																				) : (
+																					<ArrowUpIcon />
+																				)}
+																			</div>
+																		</div>
+																	</td>
+
+																	{selectedWeek === Number(week) && (
+																		<td className="flex flex-col">
+																			{weekObject.runs.map((run, index) => {
+																				return (
+																					<div
+																						key={index}
+																						className="flex justify-between py-4 pl-6 hover:bg-[#f8f8f8]"
+																					>
+																						<div className="flex flex-col text-lg">
+																							<p className="w-28 font-medium">
+																								{run.activity}
+																							</p>
+																							<p className="w-28 text-sm">
+																								{dayjs(run.date).format(
+																									"MM/DD"
+																								)}
+																							</p>
+																						</div>
+																						<div className="flex">
+																							<div className="flex items-center">
+																								<p>{run.distance} mi</p>
+																							</div>
+																							<div className="w-[104px]">
+																								<p></p>
+																							</div>
+																						</div>
+																					</div>
+																				);
+																			})}
+																		</td>
+																	)}
+																</tr>
+															);
+														})}
+												</tbody>
+											</table>
+										</div>
 									</div>
 								</div>
-							</div>
-						);
-					})}
+							);
+						})}
 			</div>
 		</>
 	);
@@ -248,6 +333,44 @@ const CrossIcon = () => {
 		>
 			<line x1="18" y1="6" x2="6" y2="18"></line>
 			<line x1="6" y1="6" x2="18" y2="18"></line>
+		</svg>
+	);
+};
+
+const ArrowDownIcon = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth={1.5}
+			stroke="currentColor"
+			className="h-6 w-6"
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+			/>
+		</svg>
+	);
+};
+
+const ArrowUpIcon = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth={1.5}
+			stroke="currentColor"
+			className="h-6 w-6"
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M4.5 15.75l7.5-7.5 7.5 7.5"
+			/>
 		</svg>
 	);
 };
