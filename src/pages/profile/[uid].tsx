@@ -63,7 +63,11 @@ export default function ProfilePage() {
 									<div className="flex justify-center py-10 text-center md:py-24">
 										<h3 className="text-center font-bold tracking-wide sm:text-3xl">
 											{profile.name.split(" ")[0]} has moved{" "}
-											<span className="underline">{weeks.totalMilesYear}</span>{" "}
+											<span className="underline">
+												{Math.round(
+													weeks.totalMilesYear * 100 + Number.EPSILON
+												) / 100}
+											</span>{" "}
 											miles in {year}
 										</h3>
 									</div>
