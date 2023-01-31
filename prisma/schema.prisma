@@ -47,6 +47,7 @@ model User {
   emailVerified DateTime?
   image         String?
   runs          Run[]
+  weight        Float?
   accounts      Account[]
   sessions      Session[]
 }
@@ -54,6 +55,7 @@ model User {
 model Run {
   id        String   @id @default(cuid())
   distance  Float
+  steps     Int?
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   createdAt DateTime @default(now())

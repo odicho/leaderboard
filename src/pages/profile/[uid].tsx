@@ -146,7 +146,7 @@ export default function ProfilePage() {
 																							<div className="flex items-center">
 																								<p>{run.distance} mi</p>
 																							</div>
-																							<div className="w-[56px]">
+																							<div className="w-[56px] sm:w-[104px]">
 																								<p></p>
 																							</div>
 																						</div>
