@@ -186,7 +186,7 @@ export default function Dashboard() {
 					</div>
 				</div>
 			)}
-			<div className="pt-10 sm:flex sm:justify-center">
+			<div className="py-10 sm:flex sm:justify-center">
 				<div className="border sm:inline-block sm:rounded-lg sm:shadow-md">
 					<table className="w-full select-none text-[#111111] sm:w-[600px]">
 						<thead>
