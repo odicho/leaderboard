@@ -6,6 +6,7 @@ import GoogleSignInButton from "../../components/GoogleSignInButton";
 import { trpc } from "../../utils/trpc";
 import "cal-sans";
 import dayjs from "dayjs";
+import Head from "next/head";
 
 export default function ProfilePage() {
 	const router = useRouter();
@@ -51,6 +52,9 @@ export default function ProfilePage() {
 
 	return (
 		<>
+			<Head>
+				<title>{(profile && profile.name) || "Profile"}</title>
+			</Head>
 			<NavBar isUserSignedIn={isUserSignedIn} />
 			<div>
 				{profile &&

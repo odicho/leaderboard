@@ -8,6 +8,7 @@ import { trpc } from "../../utils/trpc";
 import "cal-sans";
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import { RunsByWeek } from "../../server/common/get-profile";
+import Head from "next/head";
 dayjs.extend(weekOfYear);
 
 export default function HistoryPage() {
@@ -179,6 +180,9 @@ export default function HistoryPage() {
 
 	return (
 		<>
+			<Head>
+				<title>History</title>
+			</Head>
 			<NavBar
 				isUserSignedIn={isUserSignedIn}
 				userName={session?.user?.name?.split(" ")[0] ?? ""}

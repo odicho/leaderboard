@@ -9,6 +9,7 @@ import "cal-sans";
 import Link from "next/link";
 import GoogleSignInButton from "../components/GoogleSignInButton";
 import dayjs from "dayjs";
+import Head from "next/head";
 
 export default function Dashboard() {
 	const { data: session, status } = useSession();
@@ -109,6 +110,9 @@ export default function Dashboard() {
 
 	return (
 		<>
+			<Head>
+				<title>Leaderboard</title>
+			</Head>
 			{!isLoading && (
 				<NavBar
 					isUserSignedIn={isUserSignedIn}
