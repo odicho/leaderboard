@@ -7,6 +7,7 @@ import { trpc } from "../../utils/trpc";
 import "cal-sans";
 import dayjs from "dayjs";
 import Head from "next/head";
+import HistoryPage from "../history";
 
 export default function ProfilePage() {
 	const router = useRouter();
@@ -16,8 +17,24 @@ export default function ProfilePage() {
 		uid = uid[0];
 	}
 
-	const { status } = useSession();
-	const isUserSignedIn = status === "authenticated";
+	const session = useSession();
+	const isUserSignedIn = session.status === "authenticated";
+
+	if (session.data?.user?.id === uid) {
+		return <HistoryPage />;
+	} else {
+		return <PublicProfile isUserSignedIn={isUserSignedIn} uid={uid} />;
+	}
+}
+
+function PublicProfile({
+	isUserSignedIn,
+	uid,
+}: {
+	isUserSignedIn: boolean;
+	uid: string | undefined;
+}) {
+	const router = useRouter();
 
 	const profileQuery = trpc.profile.getProfile.useQuery(
 		{

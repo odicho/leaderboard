@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { prisma } from "../../../server/db/client";
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure } from "../trpc";
 import dayjs from "dayjs";
 
 export const runRouter = router({
@@ -23,7 +23,7 @@ export const runRouter = router({
 			});
 			return runs;
 		}),
-	setRun: publicProcedure
+	setRun: protectedProcedure
 		.input(
 			z.object({
 				userId: z.string(),
@@ -43,7 +43,7 @@ export const runRouter = router({
 			});
 			return distancePosted;
 		}),
-	deleteRun: publicProcedure
+	deleteRun: protectedProcedure
 		.input(z.object({ id: z.string(), distance: z.number() }))
 		.mutation(async ({ input: { id } }) => {
 			const run = await prisma.run.delete({
