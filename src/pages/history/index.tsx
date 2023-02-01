@@ -2,7 +2,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 import { trpc } from "../../utils/trpc";
 import "cal-sans";
@@ -126,6 +126,15 @@ export default function HistoryPage() {
 	const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 	const [selectedWeek, setSelectedWeek] = useState(0);
 	const [selectedYear, setSelectedYear] = useState(0);
+	const [selectedActivityOption, setSelectedActivityOption] = useState<
+		"miles" | "steps" | null
+	>(null);
+
+	const handleSelectActivityOptions = (e: ChangeEvent<HTMLSelectElement>) => {
+		if (e.target.value === "miles" || e.target.value === "steps") {
+			setSelectedActivityOption(e.target.value);
+		}
+	};
 
 	const handleWeekClick = (week: number) => {
 		if (week === selectedWeek) {
@@ -151,6 +160,7 @@ export default function HistoryPage() {
 		setSelectedDate(daysOfWeek[0]);
 		setCreateNewWeek(week);
 		setActivityInput("");
+		setSelectedActivityOption("miles");
 		setMilesInput(0);
 	};
 
@@ -160,13 +170,16 @@ export default function HistoryPage() {
 			milesInput <= 0 ||
 			selectedDate === null ||
 			selectedWeek === 0 ||
-			activityInput === ""
+			activityInput === "" ||
+			selectedActivityOption === null
 		) {
 			return;
 		}
+
 		setRun.mutate({
 			userId: session!.user!.id,
-			distance: milesInput,
+			distance:
+				selectedActivityOption === "miles" ? milesInput : milesInput / 2000,
 			activity: activityInput,
 			date: selectedDate.toISOString(),
 		});
@@ -306,7 +319,7 @@ export default function HistoryPage() {
 																					createNewWeek === Number(week)
 																						? "hidden"
 																						: ""
-																				}`}
+																				} hover:text-blue-700`}
 																				onClick={() => {
 																					handleCreateNew(
 																						Number(week),
@@ -319,14 +332,14 @@ export default function HistoryPage() {
 																			{createNew &&
 																				createNewWeek === Number(week) && (
 																					<>
-																						<div className="flex flex-col gap-4 px-6 text-lg">
-																							<div className="flex flex-col gap-4 sm:flex-row">
+																						<div className="flex flex-col gap-3 px-6 text-lg">
+																							<div className="flex w-full flex-col gap-4 sm:flex-row">
 																								{" "}
 																								<input
 																									type="text"
 																									placeholder="Activity"
 																									value={activityInput}
-																									className="w-40 rounded-md border p-1 px-4 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700 sm:w-44"
+																									className="w-[164px] rounded-md border px-4 py-2 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
 																									maxLength={30}
 																									onChange={(e) => {
 																										setActivityInput(
@@ -334,9 +347,9 @@ export default function HistoryPage() {
 																										);
 																									}}
 																								/>
-																								<div className="flex items-baseline gap-2">
+																								<div className="flex gap-1">
 																									<input
-																										className="w-32 rounded-md border py-1 px-4 text-end shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
+																										className="w-20 rounded-md border py-1 pr-3 text-end shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
 																										type="number"
 																										placeholder={"0"}
 																										min={0}
@@ -354,7 +367,23 @@ export default function HistoryPage() {
 																											);
 																										}}
 																									/>
-																									<span>mi</span>
+																									<select
+																										value={
+																											selectedActivityOption ??
+																											"miles"
+																										}
+																										onChange={
+																											handleSelectActivityOptions
+																										}
+																										className="block w-20 appearance-none rounded border py-2 text-center leading-tight  hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700"
+																									>
+																										<option value={"miles"}>
+																											{"miles"}
+																										</option>
+																										<option value={"steps"}>
+																											{"steps"}
+																										</option>
+																									</select>
 																								</div>
 																							</div>
 																							<select
@@ -366,7 +395,7 @@ export default function HistoryPage() {
 																										dayjs(e.target.value)
 																									)
 																								}
-																								className=" block w-40 appearance-none rounded border px-4 py-2 pr-8 leading-tight shadow hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700"
+																								className="block w-[164px] appearance-none rounded border py-2 pl-4 pr-8 leading-tight hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700 "
 																							>
 																								{dateOptions.map((option) => (
 																									<option
@@ -388,7 +417,7 @@ export default function HistoryPage() {
 																							<div className="flex px-10">
 																								<button
 																									onClick={() => handleSubmit()}
-																									className="focus:outline focus:outline-1 focus:outline-blue-700"
+																									className="hover:text-blue-700 focus:outline focus:outline-1 focus:outline-blue-700"
 																								>
 																									<CheckMarkIcon />
 																								</button>

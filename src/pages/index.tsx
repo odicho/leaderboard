@@ -4,7 +4,7 @@ import Image from "next/image";
 import { EARTH_CIRCUMFERENCE } from "../constants/constants";
 import { getServerAuthSession } from "../server/common/get-server-auth-session";
 import { trpc } from "../utils/trpc";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import "cal-sans";
 import Link from "next/link";
 import GoogleSignInButton from "../components/GoogleSignInButton";
@@ -78,10 +78,18 @@ export default function Dashboard() {
 	const roundedPercentageOfGoalQuarter =
 		Math.round(percentageOfGoalQuarter * 100 + Number.EPSILON) / 100;
 
-	console.log("roundedPercentageOfQuarter", roundedPercentageOfGoalQuarter);
-
 	const [milesInput, setMilesInput] = useState<number | null>(null);
 	const [activityInput, setActivityInput] = useState("");
+	const [selectedActivityOption, setSelectedActivityOption] = useState<
+		"miles" | "steps" | null
+	>(null);
+
+	const handleSelectActivityOptions = (e: ChangeEvent<HTMLSelectElement>) => {
+		if (e.target.value === "miles" || e.target.value === "steps") {
+			setSelectedActivityOption(e.target.value);
+		}
+	};
+
 	const handleSubmitMove = async () => {
 		if (!isUserSignedIn) {
 			await signIn("google", {
@@ -93,7 +101,8 @@ export default function Dashboard() {
 			}
 			setRun.mutate({
 				userId: session!.user!.id,
-				distance: milesInput,
+				distance:
+					selectedActivityOption === "miles" ? milesInput : milesInput / 2000,
 				activity: activityInput,
 				date: dayjs().toISOString(),
 			});
@@ -104,7 +113,7 @@ export default function Dashboard() {
 		e: React.KeyboardEvent<HTMLInputElement>
 	) => {
 		if (e.key === "Enter") {
-			// handleSubmitMove();
+			handleSubmitMove();
 		}
 	};
 
@@ -143,35 +152,44 @@ export default function Dashboard() {
 						<div className="py-2">
 							How many miles did you move today, and how?
 						</div>
-						<div className="flex w-[350px] items-baseline justify-between py-2">
-							<input
-								className="w-24 rounded-md border p-1 px-4 text-end shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
-								type="number"
-								min={0}
-								step={0.01}
-								placeholder="0"
-								value={milesInput ?? ""}
-								onChange={(e) => {
-									setMilesInput(
-										Math.round(
-											parseFloat(e.target.value) * 100 + Number.EPSILON
-										) / 100
-									);
-								}}
-								onKeyDown={handleSubmitMoveKeyDown}
-							/>
-							<span className="ml-2">miles, </span>
-
+						<div className="flex w-[300px] flex-col items-center gap-3 py-2 sm:w-[370px] sm:flex-row sm:justify-between">
 							<input
 								type="text"
 								placeholder="Activity"
 								value={activityInput}
-								className="w-44 rounded-md border p-1 px-4 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
+								className="w-[180px] rounded-md border py-2 px-4 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
 								maxLength={30}
 								onChange={(e) => {
 									setActivityInput(e.target.value);
 								}}
+								onKeyDown={handleSubmitMoveKeyDown}
 							/>
+							<div className="flex gap-1">
+								<input
+									className="w-24 rounded-md border py-2 px-4 text-end shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
+									type="number"
+									min={0}
+									step={0.01}
+									placeholder="0"
+									value={milesInput ?? ""}
+									onChange={(e) => {
+										setMilesInput(
+											Math.round(
+												parseFloat(e.target.value) * 100 + Number.EPSILON
+											) / 100
+										);
+									}}
+									onKeyDown={handleSubmitMoveKeyDown}
+								/>
+								<select
+									value={selectedActivityOption ?? "miles"}
+									onChange={handleSelectActivityOptions}
+									className="block w-20 appearance-none rounded border py-2 text-center leading-tight  hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700"
+								>
+									<option value={"miles"}>{"miles"}</option>
+									<option value={"steps"}>{"steps"}</option>
+								</select>
+							</div>
 						</div>
 						<button
 							className="w-20 py-2 hover:font-bold hover:text-blue-700"
