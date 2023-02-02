@@ -69,9 +69,7 @@ export default function HistoryPage() {
 			const previousUsers = profileQuery.data;
 
 			utils.profile.getProfile.setData({ userId }, (prev) => {
-				console.log(newRun.date);
 				const year = Number(dayjs(newRun.date).format("YYYY"));
-				console.log(year);
 				const week = dayjs(newRun.date).week();
 
 				if (!prev) {

@@ -58,6 +58,7 @@ export default function Dashboard() {
 			utils.user.getAllUsersAndMiles.invalidate();
 			setMilesInput(null);
 			setActivityInput("");
+			setSelectedActivityOption("miles");
 		},
 	});
 
