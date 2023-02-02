@@ -26,7 +26,6 @@ export type RunsByWeek = {
 
 const categorizeRunsByWeek = (runs: Run[]) => {
 	const runsByWeek: RunsByWeek = {};
-	let totalMilesYear = 0;
 
 	const currentDate = dayjs();
 	const currentWeekOfYear = currentDate.week();
@@ -44,7 +43,7 @@ const categorizeRunsByWeek = (runs: Run[]) => {
 	}
 
 	runs.forEach((run) => {
-		const { id, userId, distance, createdAt, date, activity } = run;
+		const { id, userId, distance, date, activity } = run;
 		const currentDate = dayjs(date);
 		const week = currentDate.week();
 		const year = currentDate.year();

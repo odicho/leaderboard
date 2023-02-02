@@ -28,21 +28,25 @@ export const runRouter = router({
 			z.object({
 				userId: z.string(),
 				distance: z.number(),
+				steps: z.number(),
 				activity: z.string(),
 				date: z.string(),
 			})
 		)
-		.mutation(async ({ input: { userId, distance, activity, date } }) => {
-			const { distance: distancePosted } = await prisma.run.create({
-				data: {
-					distance: distance,
-					user: { connect: { id: userId } },
-					activity,
-					date,
-				},
-			});
-			return distancePosted;
-		}),
+		.mutation(
+			async ({ input: { userId, distance, steps, activity, date } }) => {
+				const { distance: distancePosted } = await prisma.run.create({
+					data: {
+						distance,
+						user: { connect: { id: userId } },
+						activity,
+						date,
+						steps,
+					},
+				});
+				return distancePosted;
+			}
+		),
 	deleteRun: protectedProcedure
 		.input(z.object({ id: z.string(), distance: z.number() }))
 		.mutation(async ({ input: { id } }) => {

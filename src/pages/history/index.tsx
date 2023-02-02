@@ -71,6 +71,7 @@ export default function HistoryPage() {
 			utils.profile.getProfile.setData({ userId }, (prev) => {
 				const year = Number(dayjs(newRun.date).format("YYYY"));
 				const week = dayjs(newRun.date).week();
+
 				if (!prev) {
 					const returnObject = {
 						id: userId,
@@ -176,10 +177,15 @@ export default function HistoryPage() {
 			return;
 		}
 
+		const distance =
+			selectedActivityOption === "miles" ? milesInput : milesInput / 2000;
+		const steps =
+			selectedActivityOption === "steps" ? milesInput : milesInput * 2000;
+
 		setRun.mutate({
 			userId: session!.user!.id,
-			distance:
-				selectedActivityOption === "miles" ? milesInput : milesInput / 2000,
+			distance,
+			steps,
 			activity: activityInput,
 			date: selectedDate.toISOString(),
 		});
@@ -284,7 +290,7 @@ export default function HistoryPage() {
 																							{run.activity}
 																						</p>
 																						<p className="w-28 text-sm">
-																							{dayjs(run.date).format("MM/DD")}
+																							{dayjs(run.date).format("MMM D")}
 																						</p>
 																					</div>
 																					<div className="flex items-center">
@@ -388,7 +394,7 @@ export default function HistoryPage() {
 																							</div>
 																							<select
 																								value={selectedDate?.format(
-																									"YYYY-MM-DD"
+																									"MMM D"
 																								)}
 																								onChange={(e) =>
 																									setSelectedDate(
@@ -399,16 +405,12 @@ export default function HistoryPage() {
 																							>
 																								{dateOptions.map((option) => (
 																									<option
-																										key={option.format(
-																											"YYYY-MM-DD"
-																										)}
+																										key={option.format("MMM D")}
 																										value={option.format(
-																											"YYYY-MM-DD"
+																											"MMM D"
 																										)}
 																									>
-																										{option.format(
-																											"YYYY-MM-DD"
-																										)}
+																										{option.format("MMMM D")}
 																									</option>
 																								))}
 																							</select>
@@ -456,11 +458,11 @@ const NavBar = ({
 
 	return (
 		<nav>
-			<div className="relative border-b">
+			<div className="relative border-b shadow-sm">
 				<div className="p-4 md:p-6">
 					{isUserSignedIn ? (
 						<>
-							<div className="hidden md:flex md:justify-end">
+							<div className="hidden h-[32.73px] md:flex md:justify-end">
 								<LeaderboardNavButton />
 								<SignOutButton />
 							</div>

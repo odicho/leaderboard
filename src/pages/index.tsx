@@ -96,13 +96,24 @@ export default function Dashboard() {
 				callbackUrl: `/`,
 			});
 		} else {
-			if (milesInput === null || milesInput <= 0 || activityInput === "") {
+			if (
+				milesInput === null ||
+				milesInput <= 0 ||
+				activityInput === "" ||
+				selectedActivityOption === null
+			) {
 				return;
 			}
+
+			const distance =
+				selectedActivityOption === "miles" ? milesInput : milesInput / 2000;
+			const steps =
+				selectedActivityOption === "steps" ? milesInput : milesInput * 2000;
+
 			setRun.mutate({
 				userId: session!.user!.id,
-				distance:
-					selectedActivityOption === "miles" ? milesInput : milesInput / 2000,
+				distance,
+				steps,
 				activity: activityInput,
 				date: dayjs().toISOString(),
 			});

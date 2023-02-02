@@ -159,7 +159,7 @@ function PublicProfile({
 																							</p>
 																							<p className="w-28 text-sm">
 																								{dayjs(run.date).format(
-																									"MM/DD"
+																									"MMM D"
 																								)}
 																							</p>
 																						</div>
@@ -199,13 +199,16 @@ const NavBar = ({ isUserSignedIn }: { isUserSignedIn: boolean }) => {
 
 	return (
 		<nav>
-			<div className="relative border-b">
+			<div className="relative border-b shadow-sm">
 				<div className="p-4 md:p-6">
 					{isUserSignedIn ? (
 						<>
-							<div className="hidden md:flex md:justify-end">
+							<div className="hidden h-[32.73px] md:flex md:justify-between">
 								<LeaderboardNavButton />
-								<SignOutButton />
+								<div className="hidden md:flex">
+									<HistoryNavButton />
+									<SignOutButton />
+								</div>
 							</div>
 							<div className="flex items-center justify-end">
 								<div className="flex md:hidden">
@@ -244,6 +247,7 @@ const NavBar = ({ isUserSignedIn }: { isUserSignedIn: boolean }) => {
 					{isUserSignedIn && (
 						<div className="flex flex-col items-center justify-center gap-6 rounded-md border border-[#E2E8F0] bg-[#FFFFFF] py-6 shadow-md">
 							<LeaderboardNavButton />
+							<HistoryNavButton />
 							<SignOutButton />
 						</div>
 					)}
@@ -298,6 +302,38 @@ const LeaderboardSVG = () => {
 			<path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
 			<path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
 			<path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+		</svg>
+	);
+};
+
+const HistoryNavButton = () => {
+	return (
+		<Link
+			href="/history"
+			className="flex items-center gap-2 px-6 font-medium hover:text-blue-700"
+		>
+			<HistorySVG />
+			{"History"}
+		</Link>
+	);
+};
+
+const HistorySVG = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		>
+			<path d="M3 3v5h5"></path>
+			<path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
+			<path d="M12 7v5l4 2"></path>
 		</svg>
 	);
 };
