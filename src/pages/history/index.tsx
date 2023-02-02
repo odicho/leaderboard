@@ -130,11 +130,15 @@ export default function HistoryPage() {
 	const [selectedWeek, setSelectedWeek] = useState(0);
 	const [selectedYear, setSelectedYear] = useState(0);
 	const [selectedActivityOption, setSelectedActivityOption] = useState<
-		"miles" | "steps" | null
+		"miles" | "steps" | "calories" | null
 	>(null);
 
 	const handleSelectActivityOptions = (e: ChangeEvent<HTMLSelectElement>) => {
-		if (e.target.value === "miles" || e.target.value === "steps") {
+		if (
+			e.target.value === "miles" ||
+			e.target.value === "steps" ||
+			e.target.value === "calories"
+		) {
 			setSelectedActivityOption(e.target.value);
 		}
 	};
@@ -179,8 +183,16 @@ export default function HistoryPage() {
 			return;
 		}
 
-		const distance =
-			selectedActivityOption === "miles" ? milesInput : milesInput / 2000;
+		let distance: number;
+
+		if (selectedActivityOption === "calories") {
+			distance = milesInput / 100;
+		} else if (selectedActivityOption === "steps") {
+			distance = milesInput / 2000;
+		} else {
+			distance = milesInput;
+		}
+
 		const steps =
 			selectedActivityOption === "steps" ? milesInput : milesInput * 2000;
 
@@ -390,6 +402,9 @@ export default function HistoryPage() {
 																										</option>
 																										<option value={"steps"}>
 																											{"steps"}
+																										</option>
+																										<option value={"calories"}>
+																											{"calories"}
 																										</option>
 																									</select>
 																								</div>

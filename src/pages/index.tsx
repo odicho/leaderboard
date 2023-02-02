@@ -81,11 +81,15 @@ export default function Dashboard() {
 	const [milesInput, setMilesInput] = useState<number | null>(null);
 	const [activityInput, setActivityInput] = useState("");
 	const [selectedActivityOption, setSelectedActivityOption] = useState<
-		"miles" | "steps" | null
+		"miles" | "steps" | "calories" | null
 	>("miles");
 
 	const handleSelectActivityOptions = (e: ChangeEvent<HTMLSelectElement>) => {
-		if (e.target.value === "miles" || e.target.value === "steps") {
+		if (
+			e.target.value === "miles" ||
+			e.target.value === "steps" ||
+			e.target.value === "calories"
+		) {
 			setSelectedActivityOption(e.target.value);
 		}
 	};
@@ -105,8 +109,16 @@ export default function Dashboard() {
 				return;
 			}
 
-			const distance =
-				selectedActivityOption === "miles" ? milesInput : milesInput / 2000;
+			let distance: number;
+
+			if (selectedActivityOption === "calories") {
+				distance = milesInput / 100;
+			} else if (selectedActivityOption === "steps") {
+				distance = milesInput / 2000;
+			} else {
+				distance = milesInput;
+			}
+
 			const steps =
 				selectedActivityOption === "steps" ? milesInput : milesInput * 2000;
 
@@ -199,11 +211,12 @@ export default function Dashboard() {
 								>
 									<option value={"miles"}>{"miles"}</option>
 									<option value={"steps"}>{"steps"}</option>
+									<option value={"calories"}>{"calories"}</option>
 								</select>
 							</div>
 						</div>
 						<button
-							className="w-20 py-2 hover:font-bold hover:text-blue-700"
+							className="w-20 py-2 hover:font-bold hover:text-blue-700 focus:text-blue-700"
 							onClick={() => {
 								handleSubmitMove();
 							}}
