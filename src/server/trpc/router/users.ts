@@ -9,6 +9,12 @@ interface User {
 	image: string | null;
 }
 
+// lastInput: 01/30/2023
+// streak: 1
+
+// fetch user -> check check if lastInput.week() is equal to last week or this week, if not streak = 0
+// add run -> if currentDate - 1 == lastInput -> streak++, update lastInput to current date
+
 const usersToMiles = (users: User[]) => {
 	let totalMiles = 0;
 	const usersToMiles = users.map((user) => {

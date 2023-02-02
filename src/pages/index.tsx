@@ -82,7 +82,7 @@ export default function Dashboard() {
 	const [activityInput, setActivityInput] = useState("");
 	const [selectedActivityOption, setSelectedActivityOption] = useState<
 		"miles" | "steps" | null
-	>(null);
+	>("miles");
 
 	const handleSelectActivityOptions = (e: ChangeEvent<HTMLSelectElement>) => {
 		if (e.target.value === "miles" || e.target.value === "steps") {

@@ -69,7 +69,9 @@ export default function HistoryPage() {
 			const previousUsers = profileQuery.data;
 
 			utils.profile.getProfile.setData({ userId }, (prev) => {
+				console.log(newRun.date);
 				const year = Number(dayjs(newRun.date).format("YYYY"));
+				console.log(year);
 				const week = dayjs(newRun.date).week();
 
 				if (!prev) {
@@ -394,20 +396,20 @@ export default function HistoryPage() {
 																							</div>
 																							<select
 																								value={selectedDate?.format(
-																									"MMM D"
+																									"YYYY-MM-DD"
 																								)}
-																								onChange={(e) =>
+																								onChange={(e) => {
 																									setSelectedDate(
 																										dayjs(e.target.value)
-																									)
-																								}
+																									);
+																								}}
 																								className="block w-[164px] appearance-none rounded border py-2 pl-4 pr-8 leading-tight hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700 "
 																							>
 																								{dateOptions.map((option) => (
 																									<option
 																										key={option.format("MMM D")}
 																										value={option.format(
-																											"MMM D"
+																											"YYYY-MM-DD"
 																										)}
 																									>
 																										{option.format("MMMM D")}
