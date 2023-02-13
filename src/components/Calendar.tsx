@@ -99,7 +99,7 @@ const MonthBlock = ({
 		<div className="absolute z-10 pt-12 sm:right-0">
 			<div
 				ref={modalRef}
-				className="w-screen max-w-[50rem] rounded-md border bg-[#FFFFFF] p-2 shadow-md sm:min-w-[400px]"
+				className="w-screen rounded-md border bg-[#FFFFFF] p-2 shadow-md sm:min-w-[400px] sm:max-w-[20rem]"
 			>
 				<div className="flex flex-col gap-2">
 					<div className="flex items-center justify-between gap-3">
