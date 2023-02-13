@@ -212,7 +212,7 @@ export default function HistoryPage() {
 	return (
 		<>
 			<Head>
-				<title>History</title>
+				<title>History - XM AROUND THE WORLD</title>
 			</Head>
 			<NavBar
 				isUserSignedIn={isUserSignedIn}
@@ -357,7 +357,7 @@ export default function HistoryPage() {
 																									type="text"
 																									placeholder="Activity"
 																									value={activityInput}
-																									className="w-[164px] rounded-md border px-4 py-2 shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
+																									className="w-[164px] rounded border px-4 py-2 focus:outline focus:outline-1 focus:outline-blue-700"
 																									maxLength={30}
 																									onChange={(e) => {
 																										setActivityInput(
@@ -367,7 +367,7 @@ export default function HistoryPage() {
 																								/>
 																								<div className="flex gap-1">
 																									<input
-																										className="w-20 rounded-md border py-1 pr-3 text-end shadow-inner focus:outline focus:outline-1 focus:outline-blue-700"
+																										className="w-20 rounded border py-1 pr-3 text-end focus:outline focus:outline-1 focus:outline-blue-700"
 																										type="number"
 																										placeholder={"0"}
 																										min={0}
@@ -393,7 +393,7 @@ export default function HistoryPage() {
 																										onChange={
 																											handleSelectActivityOptions
 																										}
-																										className="block w-20 appearance-none rounded border py-2 text-center leading-tight  hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700"
+																										className="block w-20 rounded border py-2 text-center leading-tight  hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700"
 																									>
 																										<option value={"miles"}>
 																											{"miles"}
@@ -416,7 +416,7 @@ export default function HistoryPage() {
 																										dayjs(e.target.value)
 																									);
 																								}}
-																								className="block w-[164px] appearance-none rounded border py-2 pl-4 pr-8 leading-tight hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700 "
+																								className="block w-[164px] rounded border py-2 pl-4 leading-tight hover:border-blue-700 focus:outline focus:outline-1 focus:outline-blue-700 "
 																							>
 																								{dateOptions.map((option) => (
 																									<option
@@ -474,11 +474,11 @@ const NavBar = ({
 	return (
 		<nav>
 			<div className="relative border-b shadow-sm">
-				<div className="p-4 md:p-6">
+				<div className="p-4">
 					{isUserSignedIn ? (
 						<>
 							<div className="hidden h-[32.73px] md:flex md:justify-end">
-								<LeaderboardNavButton />
+								<HomeNavButton />
 								<SignOutButton />
 							</div>
 							<div className="flex items-center justify-end">
@@ -517,7 +517,7 @@ const NavBar = ({
 				>
 					{isUserSignedIn && (
 						<div className="flex flex-col items-center justify-center gap-6 rounded-md border border-[#E2E8F0] bg-[#FFFFFF] py-6 shadow-md">
-							<LeaderboardNavButton />
+							<HomeNavButton />
 							<SignOutButton />
 						</div>
 					)}
@@ -530,7 +530,7 @@ const NavBar = ({
 const SignOutButton = () => {
 	return (
 		<button
-			className="flex items-center gap-2 px-10 font-medium hover:text-blue-700"
+			className="flex items-center gap-2 px-6 text-sm font-medium hover:text-blue-700 focus:text-blue-700"
 			onClick={() => {
 				signOut({ callbackUrl: "/" });
 			}}
@@ -541,24 +541,24 @@ const SignOutButton = () => {
 	);
 };
 
-const LeaderboardNavButton = () => {
+const HomeNavButton = () => {
 	return (
 		<Link
 			href="/"
-			className="flex items-center gap-2 px-10 font-medium hover:text-blue-700"
+			className="flex items-center gap-2 px-6 text-sm font-medium outline-none hover:text-blue-700 focus:text-blue-700"
 		>
-			<LeaderboardSVG />
-			{"Leaderboard"}
+			<HomeSVG />
+			{"Home"}
 		</Link>
 	);
 };
 
-const LeaderboardSVG = () => {
+const HomeSVG = () => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
+			width="20"
+			height="20"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
@@ -566,12 +566,8 @@ const LeaderboardSVG = () => {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 		>
-			<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-			<path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-			<path d="M4 22h16"></path>
-			<path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
-			<path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
-			<path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+			<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+			<polyline points="9 22 9 12 15 12 15 22"></polyline>
 		</svg>
 	);
 };
@@ -580,8 +576,8 @@ const LogOutSVG = () => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
+			width="20"
+			height="20"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"

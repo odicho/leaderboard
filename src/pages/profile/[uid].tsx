@@ -5,9 +5,9 @@ import { useState } from "react";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 import { trpc } from "../../utils/trpc";
 import "cal-sans";
-import dayjs from "dayjs";
 import Head from "next/head";
 import HistoryPage from "../history";
+import Image from "next/image";
 
 export default function ProfilePage() {
 	const router = useRouter();
@@ -52,25 +52,12 @@ function PublicProfile({
 
 	const profile = profileQuery.data;
 
-	const [selectedWeek, setSelectedWeek] = useState(0);
-	const [selectedYear, setSelectedYear] = useState(0);
-
-	const handleWeekClick = (week: number) => {
-		if (week === selectedWeek) {
-			setSelectedWeek(0);
-			return;
-		}
-		setSelectedWeek(week);
-	};
-
-	const handleYearClick = (year: number) => {
-		setSelectedYear(year);
-	};
-
 	return (
 		<>
 			<Head>
-				<title>{(profile && profile.name) || "Profile"}</title>
+				<title>
+					{(profile && profile.name) || "Profile"} - XM AROUND THE WORLD
+				</title>
 			</Head>
 			<NavBar isUserSignedIn={isUserSignedIn} />
 			<div>
@@ -81,7 +68,25 @@ function PublicProfile({
 						.map(([year, weeks]) => {
 							return (
 								<div key={year} className="">
-									<div className="flex justify-center py-10 text-center md:py-24">
+									<div className="flex flex-col items-center justify-center gap-6 py-10 text-center md:py-20">
+										<Image
+											src={profile.image}
+											width={96}
+											height={96}
+											alt={"Profile Picture"}
+											className={
+												"hidden rounded-full outline outline-2 outline-offset-2 outline-blue-700 sm:block"
+											}
+										/>
+										<Image
+											src={profile.image}
+											width={64}
+											height={64}
+											alt={"Profile Picture"}
+											className={
+												"rounded-full outline outline-2 outline-offset-2 outline-blue-700 sm:hidden"
+											}
+										/>
 										<h3 className="text-center font-bold tracking-wide sm:text-3xl">
 											{profile.name.split(" ")[0]} has moved{" "}
 											<span className="underline">
@@ -96,7 +101,7 @@ function PublicProfile({
 										<div className="sm:inline-block sm:rounded-lg sm:border md:shadow-md">
 											<table className="w-full select-none sm:w-[600px]">
 												<thead>
-													<tr className="flex border-b border-black py-6 pl-7 pr-20 text-xl font-bold">
+													<tr className="flex border-b border-black py-6 pl-7 text-xl font-bold">
 														<th>{year}</th>
 													</tr>
 												</thead>
@@ -112,70 +117,15 @@ function PublicProfile({
 																) / 100;
 															return (
 																<tr key={week} className={`flex flex-col`}>
-																	<td
-																		className={`${
-																			selectedWeek === Number(week) &&
-																			"font-semibold"
-																		} flex cursor-pointer items-center justify-between text-xl hover:bg-[#f8f8f8]`}
-																		onClick={() => {
-																			handleWeekClick(Number(week));
-																			handleYearClick(Number(year));
-																		}}
-																	>
-																		<div className="py-4 pl-6">
-																			<p className="w-28 text-start">
-																				Week {week}
-																			</p>
-																		</div>
-																		<div className="flex">
-																			<div>
-																				<p className="w-32 text-end">
-																					{totalMilesWeek} mi
-																				</p>
-																			</div>
-																			<div className="px-4 sm:px-10">
-																				<div className="flex justify-center">
-																					{selectedWeek === Number(week) ? (
-																						<ArrowDownIcon />
-																					) : (
-																						<ArrowUpIcon />
-																					)}
-																				</div>
-																			</div>
-																		</div>
-																	</td>
+																	<td className="flex items-center justify-between px-6 py-4 text-xl">
+																		<p className="w-28 text-start">
+																			Week {week}
+																		</p>
 
-																	{selectedWeek === Number(week) && (
-																		<td className="flex flex-col border-b">
-																			{weekObject.runs.map((run, index) => {
-																				return (
-																					<div
-																						key={index}
-																						className="flex justify-between py-4 pl-6 hover:bg-[#f8f8f8]"
-																					>
-																						<div className="flex flex-col text-lg">
-																							<p className="w-28 font-medium">
-																								{run.activity}
-																							</p>
-																							<p className="w-28 text-sm">
-																								{dayjs(run.date).format(
-																									"MMM D"
-																								)}
-																							</p>
-																						</div>
-																						<div className="flex">
-																							<div className="flex items-center">
-																								<p>{run.distance} mi</p>
-																							</div>
-																							<div className="w-[56px] sm:w-[104px]">
-																								<p></p>
-																							</div>
-																						</div>
-																					</div>
-																				);
-																			})}
-																		</td>
-																	)}
+																		<p className="w-32 text-end">
+																			{totalMilesWeek} mi
+																		</p>
+																	</td>
 																</tr>
 															);
 														})}
@@ -200,11 +150,11 @@ const NavBar = ({ isUserSignedIn }: { isUserSignedIn: boolean }) => {
 	return (
 		<nav>
 			<div className="relative border-b shadow-sm">
-				<div className="p-4 md:p-6">
+				<div className="p-4">
 					{isUserSignedIn ? (
 						<>
 							<div className="hidden h-[32.73px] md:flex md:justify-between">
-								<LeaderboardNavButton />
+								<HomeNavButton />
 								<div className="hidden md:flex">
 									<HistoryNavButton />
 									<SignOutButton />
@@ -232,7 +182,8 @@ const NavBar = ({ isUserSignedIn }: { isUserSignedIn: boolean }) => {
 							</div>
 						</>
 					) : (
-						<div className="flex items-center justify-end">
+						<div className="flex items-center justify-between">
+							<HomeNavButton />
 							<GoogleSignInButton />
 						</div>
 					)}
@@ -246,7 +197,7 @@ const NavBar = ({ isUserSignedIn }: { isUserSignedIn: boolean }) => {
 				>
 					{isUserSignedIn && (
 						<div className="flex flex-col items-center justify-center gap-6 rounded-md border border-[#E2E8F0] bg-[#FFFFFF] py-6 shadow-md">
-							<LeaderboardNavButton />
+							<HomeNavButton />
 							<HistoryNavButton />
 							<SignOutButton />
 						</div>
@@ -260,7 +211,7 @@ const NavBar = ({ isUserSignedIn }: { isUserSignedIn: boolean }) => {
 const SignOutButton = () => {
 	return (
 		<button
-			className="flex items-center gap-2 px-10 font-medium hover:text-blue-700"
+			className="flex items-center gap-2 px-6 text-sm font-medium hover:text-blue-700"
 			onClick={() => {
 				signOut({ callbackUrl: "/" });
 			}}
@@ -271,24 +222,24 @@ const SignOutButton = () => {
 	);
 };
 
-const LeaderboardNavButton = () => {
+const HomeNavButton = () => {
 	return (
 		<Link
 			href="/"
-			className="flex items-center gap-2 px-10 font-medium hover:text-blue-700"
+			className="flex items-center gap-2 px-6 text-sm	 font-medium hover:text-blue-700"
 		>
-			<LeaderboardSVG />
-			{"Leaderboard"}
+			<HomeSVG />
+			{"Home"}
 		</Link>
 	);
 };
 
-const LeaderboardSVG = () => {
+const HomeSVG = () => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
+			width="20"
+			height="20"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
@@ -296,12 +247,8 @@ const LeaderboardSVG = () => {
 			strokeLinecap="round"
 			strokeLinejoin="round"
 		>
-			<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-			<path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-			<path d="M4 22h16"></path>
-			<path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
-			<path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
-			<path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+			<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+			<polyline points="9 22 9 12 15 12 15 22"></polyline>
 		</svg>
 	);
 };
@@ -310,7 +257,7 @@ const HistoryNavButton = () => {
 	return (
 		<Link
 			href="/history"
-			className="flex items-center gap-2 px-6 font-medium hover:text-blue-700"
+			className="flex items-center gap-2 px-6 text-sm font-medium hover:text-blue-700"
 		>
 			<HistorySVG />
 			{"History"}
@@ -322,8 +269,8 @@ const HistorySVG = () => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
+			width="20"
+			height="20"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
@@ -342,8 +289,8 @@ const LogOutSVG = () => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
+			width="20"
+			height="20"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"

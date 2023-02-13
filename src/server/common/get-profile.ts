@@ -2,7 +2,9 @@ import { Run } from "@prisma/client";
 import { prisma } from "../../server/db/client";
 import dayjs from "dayjs";
 import weekOfYear from "dayjs/plugin/weekOfYear";
+import utc from "dayjs/plugin/utc";
 dayjs.extend(weekOfYear);
+dayjs.extend(utc);
 
 type Runs = {
 	id: string;
@@ -44,7 +46,7 @@ const categorizeRunsByWeek = (runs: Run[]) => {
 
 	runs.forEach((run) => {
 		const { id, userId, distance, date, activity } = run;
-		const currentDate = dayjs(date);
+		const currentDate = dayjs.utc(date);
 		const week = currentDate.week();
 		const year = currentDate.year();
 
@@ -55,6 +57,7 @@ const categorizeRunsByWeek = (runs: Run[]) => {
 			date: date.toISOString(),
 			activity,
 		});
+
 		runsByWeek[year].week[week].totalMilesWeek += distance;
 		runsByWeek[year].totalMilesYear += distance;
 	});
