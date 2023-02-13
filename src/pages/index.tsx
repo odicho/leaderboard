@@ -45,12 +45,15 @@ export default function Dashboard() {
 
 			return { previousUsers };
 		},
-		// onError: (err, newRun, context) => {
-		// 	utils.user.getAllUsersAndMiles.setData(undefined, context!.previousUsers);
-		// 	setIsSubmitted(false);
-		// },
+		onError: (err, newRun, context) => {
+			utils.user.getAllusersAndSumDistance.setData(
+				undefined,
+				context!.previousUsers
+			);
+			setIsSubmitted(false);
+		},
 		onSettled: () => {
-			utils.user.getAllUsersAndMiles.invalidate();
+			utils.user.getAllusersAndSumDistance.invalidate();
 			setMilesInput(null);
 			setActivityInput("");
 			setSelectedActivityOption("miles");
@@ -171,7 +174,7 @@ export default function Dashboard() {
 			</div>
 			{!isSubmitted ? (
 				<div className="flex items-center justify-center">
-					<div className="flex w-[600px] flex-col items-center">
+					<div className="flex w-full flex-col items-center sm:w-[600px]">
 						<div className="flex flex-col items-center gap-3 py-2 sm:flex-row">
 							<p className="sm:pr-1.5">Submit your movement </p>
 							<div className="relative flex flex-col items-center pt-4 sm:pt-0">
