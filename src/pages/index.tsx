@@ -8,7 +8,7 @@ import Link from "next/link";
 import GoogleSignInButton from "../components/GoogleSignInButton";
 import dayjs from "dayjs";
 import Head from "next/head";
-import Calendar from "./cal";
+import Calendar from "../components/Calendar";
 
 export default function Dashboard() {
 	const { data: session, status } = useSession();
