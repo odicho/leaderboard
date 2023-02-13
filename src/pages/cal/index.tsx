@@ -60,7 +60,7 @@ const MonthBlock = ({
 	}, [onClose]);
 
 	// TODO: Move this to server side so that it doesn't get triggered on every re-render
-	const firstDayofMonth = today.startOf("month");
+	const firstDayofMonth = dayjs(selectedDate).startOf("month");
 	const currentDay = today.format("YYYY-MM-DD");
 
 	const [currentMonth, setCurrentMonth] = useState(firstDayofMonth);
@@ -103,7 +103,7 @@ const MonthBlock = ({
 			>
 				<div className="flex flex-col gap-2">
 					<div className="flex items-center justify-between gap-3">
-						<p className="pl-1">{currentMonth.format("MMMM YYYY")}</p>
+						<p className="pl-2">{currentMonth.format("MMMM YYYY")}</p>
 						<div className="flex gap-2 font-bold">
 							<button
 								disabled={currentMonth.isSame("2023-01-01", "month")}
@@ -162,14 +162,15 @@ const MonthBlock = ({
 										className="flex aspect-square items-center justify-center"
 									>
 										<button
+											disabled={dayjs(day).isAfter(today)}
 											className={
-												"h-full w-full rounded-md bg-gray-100 " +
+												"h-full w-full rounded-md disabled:font-light disabled:text-[#111111]/40 " +
 												(day === currentDay && selectedDate !== day
 													? "text-blue-500 "
 													: " ") +
 												(selectedDate === day
 													? " bg-[#111111] text-white "
-													: " hover:bg-gray-300 ")
+													: " enabled:bg-gray-100 enabled:hover:bg-gray-300")
 											}
 											onClick={() => handleSetSelectedDate(day)}
 										>
