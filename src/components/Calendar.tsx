@@ -146,12 +146,7 @@ const MonthBlock = ({
 									<div
 										key={index}
 										className="flex aspect-square items-center justify-center"
-									>
-										<button
-											disabled={true}
-											className={"h-full w-full bg-inherit"}
-										></button>
-									</div>
+									></div>
 								);
 							})}
 							{entries.map(([day], index) => {

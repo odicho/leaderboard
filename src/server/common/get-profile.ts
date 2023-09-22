@@ -91,8 +91,9 @@ export const getProfile = async (userId: string) => {
 
 	const runsByWeek = categorizeRunsByWeek(user.runs);
 	const { id, name, image } = user;
+	const [firstName] = name.split(" ");
 
-	const profile: Profile = { id, name, image, runsByWeek };
+	const profile: Profile = { id, name: firstName, image, runsByWeek };
 
 	return profile;
 };
