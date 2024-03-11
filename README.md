@@ -1,3 +1,6 @@
+## Note: 
+[Planetscale hobby tier is shutting down](https://planetscale.com/docs/concepts/hobby-plan-deprecation-faq). I will find a new database provider and migrate once I have some free time!
+
 # XM AROUND THE WORLD
 
 I built this project for my team @ Qualtrics. The web app enables us to collaborate on a mission, using a beautiful user interface.
